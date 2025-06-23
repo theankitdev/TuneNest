@@ -76,6 +76,7 @@ const Home = () => {
             key={index}
             title={section.title}
             item={section.items}
+            path='/player'
           />
         ))}
       </Animated.ScrollView>

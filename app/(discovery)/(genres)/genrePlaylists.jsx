@@ -34,7 +34,7 @@ const GenrePlaylists = () => {
 
     const tabOptions = [
         { label: 'OVERVIEW', path: '/home' },
-        { label: 'PLAYLISTS', path: '/genre'},
+        { label: 'PLAYLISTS'},
         { label: 'NEW RELEASES', path: '/podcasts' },
         { label: 'ARTISTS', path: '/recommendation' },
     ];
@@ -85,6 +85,7 @@ const GenrePlaylists = () => {
                         key={index}
                         title={section.title}
                         item={section.items}
+                        path='/player'
                     />
                 ))}
             </Animated.ScrollView>

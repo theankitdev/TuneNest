@@ -5,7 +5,7 @@ import { router } from 'expo-router'
 
 const SectionList = ({ title, item, path}) => {
   return (
-    <View className="mb-6">
+    <View className="mb-4 mt-2">
       <Text className="text-white font-LBold text-[18px] mb-4">{title}</Text>
       <FlatList
         horizontal

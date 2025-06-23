@@ -80,6 +80,7 @@ const handleCardPress = (genre) => {
                 scrollEventThrottle={16}
                 contentContainerStyle={{ paddingBottom: 100 }}
                 className="bg-[#1B1A1C]"
+                
             >
                 {/* Genres Section */}
                 <Text className="text-white font-LBold text-[20px] text-center px-4  pb-8">Genres</Text>
