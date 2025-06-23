@@ -14,7 +14,7 @@ const Options = ({ options }) => {
         <Pressable
           key={index}
           className="justify-center items-center"
-          onPress={() => item.path && router.replace(item.path)}
+          onPress={() => item.path && router.replace({ pathname: item.path, params: item.params })}
         >
           <Text className="text-white text-[14px] font-LBold">{item.label}</Text>
         </Pressable>

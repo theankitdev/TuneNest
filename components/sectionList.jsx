@@ -1,8 +1,9 @@
-import { View, Text, FlatList, Image } from 'react-native'
+import { View, Text, FlatList, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import { router } from 'expo-router'
 
-const SectionList = ({ title, item}) => {
+const SectionList = ({ title, item, path}) => {
   return (
     <View className="mb-6">
       <Text className="text-white font-LBold text-[18px] mb-4">{title}</Text>
@@ -13,7 +14,7 @@ const SectionList = ({ title, item}) => {
         keyExtractor={(items, index) => `${title}-${index}`}
         contentContainerStyle={{ gap: 16, paddingBottom: 20 }}
         renderItem={({item}) => (
-            <View>
+            <TouchableOpacity onPress={()=> router.push({pathname: path, params:{title: item.title, image: item.image}})} >
                 <Image
                   source={ item.image }
                   className="w-full h-[100px] rounded-lg mb-2"
@@ -30,7 +31,7 @@ const SectionList = ({ title, item}) => {
                     {item.subtitle}
                 </Text>
                 </View>
-            </View>
+            </TouchableOpacity>
         )}
       >
 

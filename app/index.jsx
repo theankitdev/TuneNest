@@ -42,7 +42,7 @@ export default function App() {
           </TouchableOpacity>
 
           <TouchableOpacity className="flex-row w-[320px] h-[46px] bg- rounded-full justify-center items-center pl-[12px] m-2 border border-white"
-          onPress={() => router.push('/home')}
+          onPress={() => router.replace('/home')}
           >
             <Text className="text-[#FFFFFF] text-[18px] text-center font-LRegular flex-1">  Sign up with Email</Text>
           </TouchableOpacity>

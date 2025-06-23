@@ -11,6 +11,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Options from '../../../components/options';
 import CategoryCard from '../../../components/CategoryCard';
 import { genre } from '../../../assets/images/genres/genre';
+import { router } from 'expo-router';
 
 const { width } = Dimensions.get('window');
 
@@ -35,6 +36,16 @@ const Genre = () => {
   { label: 'PODCASTS', path: '/podcasts' },
   { label: 'RECOMMENDATION', path: '/recommendation' },
 ];
+
+const handleCardPress = (genre) => {
+  router.push({
+    pathname: '/genreSelected',
+    params: {
+      title: genre.title,
+      image: genre.image, 
+    }
+  });
+};
 
     return (
         <>
@@ -72,7 +83,7 @@ const Genre = () => {
             >
                 {/* Genres Section */}
                 <Text className="text-white font-LBold text-[20px] text-center px-4  pb-8">Genres</Text>
-                <CategoryCard item={genre} />
+                <CategoryCard item={genre} onPress={handleCardPress}/>
 
                 {/* Moods Section */}
                 <Text className="text-white font-LBold text-[20px] text-center px-4 pt-6 pb-8">Moods</Text>

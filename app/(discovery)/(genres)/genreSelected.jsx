@@ -6,6 +6,7 @@ import {
     ScrollView,
     Pressable,
     StatusBar as RNStatusBar,
+    ImageBackground,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -13,13 +14,15 @@ import Options from '../../../components/options';
 import SectionList from '../../../components/sectionList';
 import { sections } from '../../../components/Data';
 import Genre from './genre';
+import { useLocalSearchParams } from 'expo-router';
 
 const GenreSelected = () => {
+    const { title, image } = useLocalSearchParams();
     const scrollY = useRef(new Animated.Value(0)).current;
 
     const headerHeight = scrollY.interpolate({
         inputRange: [0, 100],
-        outputRange: [187, 150],
+        outputRange: [197, 150],
         extrapolate: 'clamp',
     });
 
@@ -31,7 +34,7 @@ const GenreSelected = () => {
 
     const tabOptions = [
         { label: 'OVERVIEW', path: '/home' },
-        { label: 'PLAYLISTS', path: '/genre' },
+        { label: 'PLAYLISTS', path: '/genrePlaylists', params: { image } },
         { label: 'NEW RELEASES', path: '/podcasts' },
         { label: 'ARTISTS', path: '/recommendation' },
     ];
@@ -42,9 +45,14 @@ const GenreSelected = () => {
 
             {/* Collapsible Header */}
             <Animated.View style={{ height: headerHeight, overflow: 'hidden' }}>
-                <LinearGradient colors={['#4169E1', '#1B1A1C']} style={{ flex: 1 }}>
+                <ImageBackground
+                    source={image}
+                    style={{ flex: 1 }}
+                    resizeMode="cover"
+                    blurRadius={2}
+                >
                     <SafeAreaView className="flex-1 justify-between">
-                        <View className="items-center pt-5">
+                        <View className="items-center pt-10">
                             <Animated.Text
                                 style={{
                                     fontSize: titleFontSize,
@@ -52,13 +60,13 @@ const GenreSelected = () => {
                                     fontFamily: 'Lato-Bold',
                                 }}
                             >
-                                Rock
+                                {title}
                             </Animated.Text>
                         </View>
 
                         <Options options={tabOptions}/>
                     </SafeAreaView>
-                </LinearGradient>
+                </ImageBackground>
             </Animated.View>
 
             {/* Main Content */}
@@ -77,6 +85,7 @@ const GenreSelected = () => {
                         key={index}
                         title={section.title}
                         item={section.items}
+                        path='/genreSongs'
                     />
                 ))}
             </Animated.ScrollView>
