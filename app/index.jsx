@@ -13,7 +13,7 @@ export default function App() {
       <View className="h-full w-full p-8">
 
         {/* Logo and Title */}
-        <View className="flex-1 justify-center items-center h-[200px]">
+        <View className="flex-1 items-center h-[200px] pt-10">
           <View className="w-[147.06px] h-[155.47px] border border-[#FF0000]" style={{borderWidth: 0.5}}></View>
           <Text className="color-[#FF0000] text-[40px] font-LRegular">TuneNest</Text>
           <Text className="text-[#FFFFFF] text-[18px] font-LRegular">Play your favourite songs and artists.</Text>

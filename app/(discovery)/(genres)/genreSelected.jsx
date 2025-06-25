@@ -15,6 +15,7 @@ import SectionList from '../../../components/sectionList';
 import { sections } from '../../../components/Data';
 import Genre from './genre';
 import { useLocalSearchParams } from 'expo-router';
+import CircularSection from '../../../components/circularSectionList';
 
 const GenreSelected = () => {
     const { title, image } = useLocalSearchParams();
@@ -88,6 +89,16 @@ const GenreSelected = () => {
                         path='/genreSongs'
                     />
                 ))}
+
+                {sections.map((section, index) => (
+                    <CircularSection
+                        key={index}
+                        title='Artists'
+                        item={section.items}
+                        path='/genreArtist'
+                    />
+                ))}
+                
             </Animated.ScrollView>
         </>
     );

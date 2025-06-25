@@ -21,46 +21,46 @@ export const sections = [
       }
     ]
   },
-  {
-    title: "Make Monday More Productive",
-    items: [
-      {
-        image: album,
-        title: "Deep Focus",
-        subtitle: "678,612"
-      },
-      {
-        image: album,
-        title: "Productive Morning",
-        subtitle: "244,412"
-      },
-      {
-        image: album,
-        title: "White Noise",
-        subtitle: "146,248"
-      }
-    ]
-  },
-  {
-    title: "Browse All",
-    items: [
-      {
-        image: album,
-        title: "Workout",
-        subtitle: "Feel the burn"
-      },
-      {
-        image: album,
-        title: "Chill Hits",
-        subtitle: "Relax and unwind"
-      },
-      {
-        image: album,
-        title: "Top India",
-        subtitle: "Current Top 50"
-      }
-    ]
-  }
+  // {
+  //   title: "Make Monday More Productive",
+  //   items: [
+  //     {
+  //       image: album,
+  //       title: "Deep Focus",
+  //       subtitle: "678,612"
+  //     },
+  //     {
+  //       image: album,
+  //       title: "Productive Morning",
+  //       subtitle: "244,412"
+  //     },
+  //     {
+  //       image: album,
+  //       title: "White Noise",
+  //       subtitle: "146,248"
+  //     }
+  //   ]
+  // },
+  // {
+  //   title: "Browse All",
+  //   items: [
+  //     {
+  //       image: album,
+  //       title: "Workout",
+  //       subtitle: "Feel the burn"
+  //     },
+  //     {
+  //       image: album,
+  //       title: "Chill Hits",
+  //       subtitle: "Relax and unwind"
+  //     },
+  //     {
+  //       image: album,
+  //       title: "Top India",
+  //       subtitle: "Current Top 50"
+  //     }
+  //   ]
+  // }
 ];
 
 // utils/songs.js

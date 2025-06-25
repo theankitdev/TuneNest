@@ -6,7 +6,7 @@ import { router } from 'expo-router'
 const SectionList = ({ title, item, path}) => {
   return (
     <View className="mb-4 mt-2">
-      <Text className="text-white font-LBold text-[18px] mb-4">{title}</Text>
+      <Text className="text-white font-LBold text-[18px] mb-6">{title}</Text>
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -17,7 +17,7 @@ const SectionList = ({ title, item, path}) => {
             <TouchableOpacity onPress={()=> router.push({pathname: path, params:{title: item.title, image: item.image}})} >
                 <Image
                   source={ item.image }
-                  className="w-full h-[100px] rounded-lg mb-2"
+                  className="w-full h-[100px] rounded-lg mb-2 mt-1"
                   style={{ width: 145, height: 145 }}
                   resizeMode="conver"
                 />

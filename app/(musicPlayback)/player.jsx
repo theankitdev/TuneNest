@@ -1,5 +1,5 @@
-import { View, Text, ImageBackground, TouchableOpacity } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
+import { View, Text, ImageBackground, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,7 +13,6 @@ import music from '../../assets/music/sample.mp3';
 const Player = () => {
   const { title, image } = useLocalSearchParams();
 
-  // Audio references and state
   const sound = useRef(null);
   const isMounted = useRef(true);
   const [position, setPosition] = useState(0);
@@ -22,7 +21,6 @@ const Player = () => {
   const [isPlaying, setIsPlaying] = useState(true);
   const [isSeeking, setIsSeeking] = useState(false);
 
-  // Format time for display
   const formatTime = (millis) => {
     if (!millis) return "0:00";
     const totalSeconds = Math.floor(millis / 1000);
@@ -31,23 +29,19 @@ const Player = () => {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
-  // Handle playback status updates
   const onPlaybackStatusUpdate = (status) => {
     if (!status.isLoaded || !isMounted.current) return;
-    
-    // Always update duration
+
     setDuration(status.durationMillis || 1);
-    
-    // Only update position if not currently seeking
+
     if (!isSeeking) {
       setPosition(status.positionMillis);
       setDisplayPosition(status.positionMillis);
     }
-    
+
     setIsPlaying(status.isPlaying);
   };
 
-  // Load the audio file
   const loadSound = async () => {
     try {
       const { sound: newSound } = await Audio.Sound.createAsync(
@@ -61,46 +55,37 @@ const Player = () => {
     }
   };
 
-  // Handle slider value changes
   const handleSliderChange = (value) => {
-    if (!isSeeking) {
-      setIsSeeking(true);
-    }
+    if (!isSeeking) setIsSeeking(true);
     setDisplayPosition(value);
   };
 
-  // Handle slider seek completion
   const handleSliderComplete = async (value) => {
     if (!sound.current) return;
 
     try {
-      // Update the actual position
-      setPosition(value);
-      
-      // Seek in the audio
       await sound.current.setPositionAsync(value);
-      
-      // Get updated status
+
       const status = await sound.current.getStatusAsync();
-      
-      // Resume playback if it was playing
+
       if (status.isLoaded && status.isPlaying) {
         await sound.current.playAsync();
       }
+
+      setPosition(value);
+      setDisplayPosition(value);
     } catch (error) {
       console.error('Seek failed:', error);
-      // Revert to current position if seek fails
       const status = await sound.current.getStatusAsync();
       if (status.isLoaded) {
-        setDisplayPosition(status.positionMillis);
         setPosition(status.positionMillis);
+        setDisplayPosition(status.positionMillis);
       }
     } finally {
       setIsSeeking(false);
     }
   };
 
-  // Toggle play/pause
   const togglePlayPause = async () => {
     if (!sound.current) return;
 
@@ -116,11 +101,10 @@ const Player = () => {
     }
   };
 
-  // Cleanup on unmount
   useEffect(() => {
     isMounted.current = true;
     loadSound();
-    
+
     return () => {
       isMounted.current = false;
       if (sound.current) {
@@ -163,10 +147,9 @@ const Player = () => {
               </TouchableOpacity>
             </View>
 
-            {/* Slider with fixed seeking behavior */}
+            {/* Slider */}
             <Slider
-              className="px-4"
-              style={{ width: '100%' }}
+              style={{ width: '100%', paddingTop: 20 }}
               minimumValue={0}
               maximumValue={duration}
               value={isSeeking ? displayPosition : position}
