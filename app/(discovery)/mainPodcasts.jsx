@@ -90,7 +90,7 @@ const MainPodcasts = () => {
         </View>
 
         <View className="px-4 mt-6">
-          <Text className=" text-[14px] font-LBold text-white mb-6 pb-1">Featured episodes</Text>
+          <Text className=" text-[14px] font-LBold text-white mb-6 pb-1">Featured </Text>
           <SongList songs={songs}/>
         </View>
         <View className="mt-8 ">
