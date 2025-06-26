@@ -19,9 +19,9 @@ import { sections, songs } from '../../components/Data';
 import { genre } from '../../assets/images/genres/genre';
 import CategoryCard from '../../components/CategoryCard';
 import SongList from '../../components/songList';
-
+// hhgjhkklihj
 const MainPodcasts = () => {
-  const scrollY = useRef(new Animated.Value(0)).current;
+  const scrollY = useRef(new Animated.Value(0)).current;  
 
   const headerHeight = scrollY.interpolate({
     inputRange: [0, 100],
