@@ -125,6 +125,7 @@ const Player = () => {
       >
         <SafeAreaView className="flex-1 pt-4">
           {/* Header */}
+          {/* ankit bhadwa */}
           <View className="flex-row justify-between pb-10 px-6">
             <TouchableOpacity>
               <Ionicons name="chevron-down" size={24} color="white" />
