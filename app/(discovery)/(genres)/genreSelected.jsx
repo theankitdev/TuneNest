@@ -95,7 +95,7 @@ const GenreSelected = () => {
                         key={index}
                         title='Artists'
                         item={section.items}
-                        path='/genreArtist'
+                        path='/artist'
                     />
                 ))}
                 
