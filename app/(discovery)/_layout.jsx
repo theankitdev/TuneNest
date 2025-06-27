@@ -8,6 +8,7 @@ const _layout = () => {
         <Stack.Screen name='(genres)' options={{ headerShown: false}}/>
         <Stack.Screen name='podcasts' options={{ headerShown: false}}/>
         <Stack.Screen name='mainPodcasts' options={{ headerShown: false}}/>
+        <Stack.Screen name='(genreSelected)' options={{ headerShown: false}}/>
     </Stack>
   )
 }

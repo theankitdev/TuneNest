@@ -9,7 +9,6 @@ const _layout = () => {
         <Stack.Screen name='genreSelected' options={{headerShown: false}}/>
         <Stack.Screen name='genrePlaylists' options={{headerShown: false}}/>
         <Stack.Screen name='genreSongs' options={{headerShown: false}}/>
-        <Stack.Screen name='genreArtist' options={{headerShown: false}}/>
     </Stack>
   )
 }
