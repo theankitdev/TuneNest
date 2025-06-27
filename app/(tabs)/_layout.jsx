@@ -87,6 +87,15 @@ const _layout = () => {
       <Tabs.Screen
         name="library"
         options={{
+          headerShown:true,
+        headerTitle:"Library",
+        headerTitleStyle:{ color: '#FFFFFF', fontFamily: 'Lato-Regular', fontSize: 20 },
+        headerTitleAlign:"center",
+        headerStyle: {
+          backgroundColor: '#161A1A',
+          borderBottomWidth: 1,
+          borderBottomColor: 'black',
+        },
          tabBarLabel: ({ focused }) => (
             <Text style={{ color: focused ? '#2DCEEF' : '#99999F', fontSize: 14, fontFamily: 'Lato-Regular' }} >
               Library

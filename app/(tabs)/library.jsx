@@ -1,12 +1,83 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import playlist from '../../assets/images/playlist.png';
+import albumIcon from '../../assets/images/albumIcon.png';
+import SongList from '../../components/songList'; 
+import songs from '../../components/Data'; // Assuming you have a song image
 
 const Library = () => {
-  return (
-    <View>
-      <Text>Library</Text>
-    </View>
-  )
-}
+  const router = useRouter();
 
-export default Library
+  return (
+    <SafeAreaView className="flex-1 bg-[#161A1A]">
+      <StatusBar style="light" />
+
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20 }}>
+        <TouchableOpacity
+          className="flex-row items-center space-x-3 mb-6"
+          onPress={() => router.push('/myPlaylists')}
+        >
+          <Image source={playlist} style={{ width: 20, height: 20, marginRight:12}} />
+          <Text className="text-white text-[18px] font-LRegular">Playlists</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="flex-row items-center space-x-3 mb-6"
+          onPress={() => router.push('/favourite')}
+        >
+          <Ionicons name="heart-outline" size={24} color="#2DCEEF" style={{marginRight:9}}/>
+          <Text className="text-white text-[18px] font-LRegular">Favorite Songs</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="flex-row items-center space-x-3 mb-6"
+          onPress={() => router.push('/myAlbums')}
+        >
+          <Image source={albumIcon} style={{ width: 22, height: 22, marginRight:11 }} />
+          <Text className="text-white text-[18px] font-LRegular">Albums</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="flex-row items-center space-x-3 mb-6"
+          onPress={() => router.push('/myArtists')}
+        >
+          <Ionicons name="star-outline" size={24} color="#2DCEEF" style={{marginRight:11}} />
+          <Text className="text-white text-[18px] font-LRegular">Artists</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="flex-row items-center space-x-3 mb-6"
+          onPress={() => router.push('/myPodcasts')}
+        >
+          <Ionicons name="radio-outline" size={18} color="#2DCEEF" className="border border-[#2DCEEF] mr-3"/>
+          <Text className="text-white text-[18px] font-LRegular">{' '}
+            Podcasts <Text className="text-[#2DCEEF] font-LRegular">+1</Text>
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="flex-row items-center space-x-3 mb-6"
+          onPress={() => router.push('/myHistory')}
+        >
+          <Text className="text-[#2DCEEF] text-[18px] font-LBold border border-[#2DCEEF] rounded-full px-1 mr-3">H</Text>
+          <Text className="text-white text-[18px] font-LRegular"> Listening History</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="flex-row items-center space-x-3 mb-6"
+          onPress={() => router.push('/downloads')}
+        >
+          <Ionicons name="arrow-down-outline" size={20} color="#2DCEEF" style={{marginRight:14}} className="border border-[#2DCEEF] rounded-full"/>
+          <Text className="text-white text-[18px] font-LRegular">Downloaded</Text>
+        </TouchableOpacity>
+
+        <SongList songs={songs}/>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+export default Library;
