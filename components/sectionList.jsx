@@ -1,9 +1,28 @@
-import { View, Text, FlatList, Image, TouchableOpacity } from 'react-native'
-import React from 'react'
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import { router } from 'expo-router'
+import { View, Text, FlatList, Image, TouchableOpacity } from "react-native";
+import React from "react";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { router } from "expo-router";
+import { useAudioPlayer } from "../context/AudioPlayerContext";
 
-const SectionList = ({ title, item, path}) => {
+const SectionList = ({ title, item }) => {
+  const { loadAndPlayTrack } = useAudioPlayer();
+
+  const handlePlay = (track) => {
+    if (!track?.audio) {
+      console.warn("Missing audio in track:", track);
+      return;
+    }
+
+    loadAndPlayTrack(track);
+    router.push({
+      pathname: "/player",
+      params: {
+        title: track.title,
+        image: track.image,
+      },
+    });
+  };
+
   return (
     <View className="mb-4 mt-2">
       <Text className="text-white font-LBold text-[18px] mb-6">{title}</Text>
@@ -13,31 +32,34 @@ const SectionList = ({ title, item, path}) => {
         data={item}
         keyExtractor={(items, index) => `${title}-${index}`}
         contentContainerStyle={{ gap: 16, paddingBottom: 20 }}
-        renderItem={({item}) => (
-            <TouchableOpacity onPress={()=> router.push({pathname: path, params:{title: item.title, image: item.image}})} >
-                <Image
-                  source={ item.image }
-                  className="w-full h-[100px] rounded-lg mb-2 mt-1"
-                  style={{ width: 145, height: 145 }}
-                  resizeMode="conver"
-                />
-                <Text className="text-white font-LRegular text-[14px] numberOfLines={1}">
-                    {item.title}
-                </Text>
-
-                <View className="flex-row items-center gap-1 mt-1">
-                    <Ionicons name='heart' size={14} color='#99999F'/>
-                <Text className="text-[#99999F] font-LRegular text-[10px] numberOfLines={1}">
-                    {item.subtitle}
-                </Text>
-                </View>
-            </TouchableOpacity>
+        renderItem={({ item: track }) => (
+          <TouchableOpacity onPress={() => handlePlay(track)}>
+            <Image
+              source={track.image}
+              className="w-full h-[100px] rounded-lg mb-2 mt-1"
+              style={{ width: 145, height: 145 }}
+              resizeMode="cover"
+            />
+            <Text
+              className="text-white font-LRegular text-[14px]"
+              numberOfLines={1}
+            >
+              {track.title}
+            </Text>
+            <View className="flex-row items-center gap-1 mt-1">
+              <Ionicons name="heart" size={14} color="#99999F" />
+              <Text
+                className="text-[#99999F] font-LRegular text-[10px]"
+                numberOfLines={1}
+              >
+                {track.subtitle}
+              </Text>
+            </View>
+          </TouchableOpacity>
         )}
-      >
-
-      </FlatList>
+      />
     </View>
-  )
-}
+  );
+};
 
-export default SectionList
+export default SectionList;
