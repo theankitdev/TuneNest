@@ -7,15 +7,18 @@ import { StatusBar } from "expo-status-bar";
 import Slider from "@react-native-community/slider";
 import SongCarousel from "../../components/carousel";
 import { songs } from "../../components/Data";
-import { Audio } from "expo-av";
 import { useAudioPlayer } from "../../context/AudioPlayerContext";
 
 const Player = () => {
   const { title, image } = useLocalSearchParams();
-  const { isPlaying, togglePlayPause, setIsMiniPlayerVisible, currentTrack } =
-    useAudioPlayer();
+  const {
+    isPlaying,
+    togglePlayPause,
+    setIsMiniPlayerVisible,
+    currentTrack,
+    sound,
+  } = useAudioPlayer();
 
-  const sound = useRef(null);
   const isMounted = useRef(true);
   const [position, setPosition] = useState(0);
   const [duration, setDuration] = useState(1);
@@ -41,36 +44,24 @@ const Player = () => {
     }
   };
 
-  // Manually connect to current sound object (optional if already in context)
-  const connectSound = async () => {
-    if (!currentTrack || !currentTrack.audio) {
-      console.warn("No valid currentTrack found");
-      return;
-    }
-
-    try {
-      const { sound: newSound } = await Audio.Sound.createAsync(
-        currentTrack.audio,
-        { shouldPlay: true },
-        onPlaybackStatusUpdate
-      );
-      sound.current = newSound;
-    } catch (err) {
-      console.error("Error loading playback:", err);
-    }
-  };
-
   useEffect(() => {
+    const init = async () => {
+      if (sound?.current) {
+        await sound.current.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+        const status = await sound.current.getStatusAsync();
+        setPosition(status.positionMillis);
+        setDisplayPosition(status.positionMillis);
+        setDuration(status.durationMillis || 1);
+      }
+    };
+
     isMounted.current = true;
-    setIsMiniPlayerVisible(false); // hide mini player
-    connectSound();
+    setIsMiniPlayerVisible(false);
+    init();
 
     return () => {
       isMounted.current = false;
-      if (sound.current) {
-        sound.current.unloadAsync();
-      }
-      setIsMiniPlayerVisible(true); // show mini player again on exit
+      setIsMiniPlayerVisible(true);
     };
   }, []);
 
@@ -80,7 +71,7 @@ const Player = () => {
   };
 
   const handleSliderComplete = async (value) => {
-    if (!sound.current) return;
+    if (!sound?.current) return;
 
     try {
       await sound.current.setPositionAsync(value);

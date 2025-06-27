@@ -41,7 +41,6 @@ const RootLayout = () => {
         <Stack.Screen name="(discovery)" options={{ headerShown: false }} />
         <Stack.Screen name="(musicPlayback)" options={{ headerShown: false }} />
       </Stack>
-      <MiniPlayer />
     </AudioPlayerProvider>
   );
 };

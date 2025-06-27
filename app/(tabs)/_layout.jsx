@@ -3,9 +3,11 @@ import React from 'react'
 import { Tabs } from 'expo-router'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import MiniPlayer from '../../components/minPlayer'
 
 const _layout = () => {
   return (
+    <>
     <Tabs
       screenOptions={{
         animation: 'none',
@@ -112,6 +114,8 @@ const _layout = () => {
         }}
       />
     </Tabs>
+    <MiniPlayer />
+    </>
   )
 }
 
