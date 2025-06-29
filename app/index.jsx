@@ -6,12 +6,12 @@ import facebookIcon from '../assets/images/facebook-logo.png';
 import googleIcon from '../assets/images/google-logo.png';
 
 export default function App() {
+  
   return (
     <SafeAreaView className="flex bg-[#1B1A1C] pb-8">
       <StatusBar  style='light' />
 
       <View className="h-full w-full p-8">
-
         {/* Logo and Title */}
         <View className="flex-1 items-center h-[200px] pt-10">
           <View className="w-[147.06px] h-[155.47px] border border-[#FF0000]" style={{borderWidth: 0.5}}></View>

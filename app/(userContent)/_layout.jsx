@@ -32,6 +32,20 @@ const _layout = () => {
                     borderBottomWidth: 1,
                 },
             }} />
+            <Stack.Screen name="listeningHistory" options={{
+                headerBackVisible: false,
+                title: 'Listening History',
+                headerTitleAlign: 'center',
+                headerTitleStyle: {
+                    color: 'white',
+                    fontFamily: 'Lato-Bold',
+                    fontSize: 18,
+                },
+                headerStyle: {
+                    backgroundColor: '#161A1A',
+                    borderBottomWidth: 1,
+                },
+            }} />
         </Stack>
     )
 }

@@ -60,7 +60,7 @@ const Library = () => {
 
         <TouchableOpacity
           className="flex-row items-center space-x-3 mb-6"
-          onPress={() => router.push('/myHistory')}
+          onPress={() => router.push('/listeningHistory')}
         >
           <Text className="text-[#2DCEEF] text-[18px] font-LBold border border-[#2DCEEF] rounded-full px-1 mr-3">H</Text>
           <Text className="text-white text-[18px] font-LRegular"> Listening History</Text>
