@@ -6,7 +6,7 @@ import { useRouter } from 'expo-router';
 import playlist from '../../assets/images/playlist.png';
 import albumIcon from '../../assets/images/albumIcon.png';
 import SongList from '../../components/songList'; 
-import songs from '../../components/Data'; // Assuming you have a song image
+import {songs} from '../../components/Data.js'; // Assuming you have a song image
 
 const Library = () => {
   const router = useRouter();
@@ -15,10 +15,10 @@ const Library = () => {
     <SafeAreaView className="flex-1 bg-[#161A1A]">
       <StatusBar style="light" />
 
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20 }}>
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 80 }}>
         <TouchableOpacity
           className="flex-row items-center space-x-3 mb-6"
-          onPress={() => router.push('/myPlaylists')}
+          onPress={() => router.push('/myPlaylistEdit')}
         >
           <Image source={playlist} style={{ width: 20, height: 20, marginRight:12}} />
           <Text className="text-white text-[18px] font-LRegular">Playlists</Text>
@@ -26,7 +26,7 @@ const Library = () => {
 
         <TouchableOpacity
           className="flex-row items-center space-x-3 mb-6"
-          onPress={() => router.push('/favourite')}
+          onPress={() => router.push('/favouriteSongs')}
         >
           <Ionicons name="heart-outline" size={24} color="#2DCEEF" style={{marginRight:9}}/>
           <Text className="text-white text-[18px] font-LRegular">Favorite Songs</Text>
@@ -74,7 +74,10 @@ const Library = () => {
           <Text className="text-white text-[18px] font-LRegular">Downloaded</Text>
         </TouchableOpacity>
 
-        <SongList songs={songs}/>
+          <View className="mt-8">
+            <Text className="text-[20px] text-white font-LRegular mb-8">Recently Play</Text>
+          <SongList songs={songs}/>
+          </View>
       </ScrollView>
     </SafeAreaView>
   );

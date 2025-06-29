@@ -6,6 +6,7 @@ const SongList = ({songs}) => {
     <FlatList
        data={songs}
        keyExtractor={(item) => item.id}
+       scrollEnabled={false}
        renderItem={({item}) => (
         <TouchableOpacity className="flex-row items-center gap-2 mb-6">
             <Image

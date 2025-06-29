@@ -7,6 +7,7 @@ const CategoryCard = ({ item, onPress }) => {
         <FlatList
             data={item}
             keyExtractor={(_, index) => index.toString()}
+            scrollEnabled={false}
             columnWrapperStyle={{ justifyContent: 'space-between', marginBottom: 15, paddingHorizontal: 15, gap: 15 }}
             showsVerticalScrollIndicator={false}
             numColumns={2}
