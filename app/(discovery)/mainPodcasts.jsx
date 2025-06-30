@@ -38,7 +38,7 @@ const MainPodcasts = () => {
   const tabOptions = [
     { label: 'OVERVIEW', path: '/home' },
     { label: 'GENRE & MOODS', path: '/genre' },
-    { label: 'PODCASTS'},
+    { label: 'PODCASTS', path: '/mainPodcasts' },
     { label: 'RECOMMENDATION', path: '/recommendation' },
   ];
 

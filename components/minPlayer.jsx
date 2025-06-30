@@ -1,8 +1,15 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
 import { useAudioPlayer } from '../context/AudioPlayerContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useRouter } from 'expo-router';
+import { useRouter, useSegments, usePathname } from 'expo-router';
 import Slider from '@react-native-community/slider';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -21,11 +28,15 @@ const MiniPlayer = () => {
   } = useAudioPlayer();
 
   const router = useRouter();
+  const segments = useSegments();
+  const pathname = usePathname();
+  const isInTabs = segments[0] === '(tabs)';
 
-  if (!isMiniPlayerVisible || !currentTrack) return null;
+  // Hide MiniPlayer
+  if (!isMiniPlayerVisible || !currentTrack || pathname === '/player') return null;
 
   return (
-    <View style={styles.wrapper}>
+    <View style={[styles.wrapper, { bottom: isInTabs ? 80 : 20 }]}>
       <TouchableOpacity
         activeOpacity={1}
         onPress={() => {
@@ -55,7 +66,6 @@ const MiniPlayer = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Connected slider */}
         <Slider
           style={styles.slider}
           minimumValue={0}
@@ -76,7 +86,6 @@ export default MiniPlayer;
 const styles = StyleSheet.create({
   wrapper: {
     position: 'absolute',
-    bottom: 80,
     width: SCREEN_WIDTH,
     zIndex: 1000,
     paddingHorizontal: 10,

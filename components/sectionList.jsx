@@ -4,7 +4,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { router } from "expo-router";
 import { useAudioPlayer } from "../context/AudioPlayerContext";
 
-const SectionList = ({ title, item }) => {
+const SectionList = ({ title, item, subtitle }) => {
   const { loadAndPlayTrack } = useAudioPlayer();
 
   const handlePlay = (track) => {
@@ -25,13 +25,16 @@ const SectionList = ({ title, item }) => {
 
   return (
     <View className="mb-4 mt-2">
-      <Text className="text-white font-LBold text-[18px] mb-6">{title}</Text>
+      <Text className="text-white font-LBold text-[18px] ">{title}</Text>
+      { subtitle && (
+      <Text className="text-[#99999F] font-LRegular text-[14px] mt-2">{subtitle}</Text>
+      )}
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
         data={item}
         keyExtractor={(items, index) => `${title}-${index}`}
-        contentContainerStyle={{ gap: 16, paddingBottom: 20 }}
+        contentContainerStyle={{ gap: 16, paddingBottom: 20, marginTop: 22 }}
         renderItem={({ item: track }) => (
           <TouchableOpacity onPress={() => handlePlay(track)}>
             <Image
