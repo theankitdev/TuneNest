@@ -14,12 +14,12 @@ const SongCarousel = ({ item }) => {
                 mode='parallax'
                 modeConfig={{
                     // parallaxScrollingScale: 0.6,     // How much side items shrink
-                    // parallaxScrollingOffset: 50,     // Controls side spacing
+                    parallaxScrollingOffset: 80,     // Controls side spacing
                     parallaxAdjacentItemScale: 0.72,  // Size of side items
                 }}
                 ref={ref}
                 width={width}
-                height='300'
+                height='350'
                 data={item}
                 onProgressChange={progress}
                 renderItem={({ item, index }) => (
@@ -33,7 +33,7 @@ const SongCarousel = ({ item }) => {
                     >
                         <Image
                             source={item.image}
-                            style={{ width: 300, height: 300, borderRadius: 20 }}
+                            style={{ width: 330, height: 330, borderRadius: 20 }}
                             resizeMode="cover"
                         />
                         <Text className="font-LRegular text-center pt-4 text-white text-[16px]">

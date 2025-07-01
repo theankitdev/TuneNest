@@ -19,16 +19,22 @@ const SectionList = ({ title, item, subtitle }) => {
       params: {
         title: track.title,
         image: track.image,
+        audio: track.audio,
+        playlist: JSON.stringify(item)
       },
     });
   };
 
   return (
     <View className="mb-4 mt-2">
-      <Text className="text-white font-LBold text-[18px] ">{title}</Text>
-      { subtitle && (
-      <Text className="text-[#99999F] font-LRegular text-[14px] mt-2">{subtitle}</Text>
+      <Text className="text-white font-LBold text-[18px]">{title}</Text>
+
+      {subtitle && (
+        <Text className="text-[#99999F] font-LRegular text-[14px] mt-2">
+          {subtitle}
+        </Text>
       )}
+
       <FlatList
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -46,18 +52,30 @@ const SectionList = ({ title, item, subtitle }) => {
             <Text
               className="text-white font-LRegular text-[14px]"
               numberOfLines={1}
+              ellipsizeMode="tail"
+              style={{ width: 145 }}
             >
               {track.title}
             </Text>
-            <View className="flex-row items-center gap-1 mt-1">
-              <Ionicons name="heart" size={14} color="#99999F" />
+
+            {track.subtitle ? (
               <Text
-                className="text-[#99999F] font-LRegular text-[10px]"
+                className="text-[#99999F] font-LRegular text-[10px] mt-1"
                 numberOfLines={1}
               >
                 {track.subtitle}
               </Text>
-            </View>
+            ) : (
+              <View className="flex-row items-center gap-1 mt-1">
+                <Ionicons name="heart" size={14} color="#99999F" />
+                <Text
+                  className="text-[#99999F] font-LRegular text-[10px]"
+                  numberOfLines={1}
+                >
+                  {track.likes || "12.5K"}
+                </Text>
+              </View>
+            )}
           </TouchableOpacity>
         )}
       />

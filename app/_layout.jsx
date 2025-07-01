@@ -1,50 +1,62 @@
-import React, { use } from 'react';
+// app/_layout.js
+import '../global.css'; 
 import { useEffect } from 'react';
 import { useFonts } from 'expo-font';
-import { SplashScreen, Stack } from 'expo-router';
+import { SplashScreen, Stack, useRouter } from 'expo-router';
+import { AuthProvider, useAuth } from '../context/authContext';
 import { AudioPlayerProvider } from '../context/AudioPlayerContext';
-import '../global.css';
 import MiniPlayer from '../components/minPlayer';
 
 SplashScreen.preventAutoHideAsync();
 
-const RootLayout = () => {
+function MainLayout() {
+  const router = useRouter();
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (loading) return;
+
+    if (user) {
+      router.replace('/home'); // ✅ auto-redirect to home
+    }
+  }, [loading, user]);
+
+  if (loading) return null; // Or show splash screen
+
+  return (
+    <>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="home" />
+        <Stack.Screen name="login" />
+        <Stack.Screen name="signup" />
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="(auth)" />
+        {/* add more screens if needed */}
+      </Stack>
+      <MiniPlayer />
+    </>
+  );
+}
+
+export default function RootLayout() {
   const [fontsLoaded, error] = useFonts({
-    'Lato-Black': require('../assets/fonts/Lato-Black.ttf'),
-    'Lato-BlackItalic': require('../assets/fonts/Lato-BlackItalic.ttf'),
     'Lato-Bold': require('../assets/fonts/Lato-Bold.ttf'),
-    'Lato-BoldItalic': require('../assets/fonts/Lato-BoldItalic.ttf'),
-    'Lato-Italic': require('../assets/fonts/Lato-Italic.ttf'),
-    'Lato-Light': require('../assets/fonts/Lato-Light.ttf'),
-    'Lato-LightItalic': require('../assets/fonts/Lato-LightItalic.ttf'),
     'Lato-Regular': require('../assets/fonts/Lato-Regular.ttf'),
-    'Lato-Thin': require('../assets/fonts/Lato-Thin.ttf'),
-    'Lato-ThinItalic': require('../assets/fonts/Lato-ThinItalic.ttf'),
+    // add others...
   });
 
   useEffect(() => {
     if (error) throw error;
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
-    }
+    if (fontsLoaded) SplashScreen.hideAsync();
   }, [fontsLoaded, error]);
 
   if (!fontsLoaded) return null;
 
   return (
-    <AudioPlayerProvider>
-      <Stack screenOptions={{ animation: 'none', gestureEnabled: false }}>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(search)" options={{ headerShown: false }} />
-        <Stack.Screen name="(discovery)" options={{ headerShown: false }} />
-        <Stack.Screen name="(musicPlayback)" options={{ headerShown: false }} />
-        <Stack.Screen name="(userContent)" options={{ headerShown: false }} />
-      </Stack>
-      <MiniPlayer />
-    </AudioPlayerProvider>
+    <AuthProvider>
+      <AudioPlayerProvider>
+        <MainLayout />
+      </AudioPlayerProvider>
+    </AuthProvider>
   );
-};
-
-export default RootLayout;
+}

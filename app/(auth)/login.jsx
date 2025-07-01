@@ -6,12 +6,31 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import googleIcon from '../../assets/images/google-logo.png';
 import facebookIcon from '../../assets/images/facebook-logo.png';
+import { FIREBASE_AUTH } from '../../FirebaseConfig';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const auth = FIREBASE_AUTH;
+
+  const handleLogin = async () => {
+    setLoading(true);
+    try {
+      //  Add your login logic here, e.g., using Firebase Auth
+      const response = await signInWithEmailAndPassword(auth, email, password);
+      console.log(response);
+      // Navigate to the next screen or show success message
+    } catch (error) {
+      console.error('Login failed:', error);
+      // Handle login error, e.g., show an alert
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <LinearGradient colors={['#FF0000', '#000000']} style={{ flex: 1, padding: 8 }}
@@ -25,7 +44,7 @@ const Login = () => {
             <Text className="text-white font-LBold text-center" style={{ fontSize: 26 }}>Log In</Text>
           </View>
 
-        // Email Input
+         {/* Email Input */}
           <View className="flex-1 space-x-4 px-4">
             <View className="mb-4 justify-center">
               <Text className="text-white text-[16px] font-LRegular mb-2">Email</Text>
@@ -45,7 +64,7 @@ const Login = () => {
               />
             </View>
 
-        // Password Input
+         {/* Password Input */}
             <View className="mb-4 justify-center">
               <Text className="text-white text-[16px] font-LRegular mb-2">Password</Text>
               <TextInput
@@ -63,11 +82,13 @@ const Login = () => {
               />
             </View>
 
-          // Login Button
+          {/* Login Button */}
             <View className="flex-1 items-center mt-10">
               <TouchableOpacity
-                className="w-[171px] h-[46px] border border-white rounded-full justify-center items-center mt-4"
-                onPress={() => console.log('Sign Up Pressed')}>
+                className={`w-[171px] h-[46px] border border-white rounded-full justify-center items-center mt-4 ${loading ? 'opacity-40' : 'opacity-100'}`}
+                onPress={handleLogin}
+                disabled={loading}
+                >
                 <Text className="text-white font-LBold text-[18px]">LOG IN</Text>
               </TouchableOpacity>
             </View>

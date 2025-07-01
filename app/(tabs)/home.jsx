@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect,useCallback } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import {
   Animated,
   View,
@@ -21,6 +21,8 @@ import { genre } from '../../assets/images/genres/genre';
 import CircularSection from '../../components/circularSectionList';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
+import music from '../../assets/music/sample.mp3';
 
 const useBackToHome = () => {
   const pathname = usePathname();
@@ -48,28 +50,53 @@ const Home = () => {
   const scrollY = useRef(new Animated.Value(0)).current;
 
   const [playlist, setPlaylist] = useState(null);
+  const [recentlyPlayed, setRecentlyPlayed] = useState([]);
+
+  useEffect(() => {
+    const getRecentPlayed = async () => {
+      try {
+        const token = 'BQColrB3CNy2ISjcOZACfmXEBVDUGC1640_nUnPcBMf9U1YD5KCEWcsEP0q3_uoM6qu3roKbQVzqUZ48Aw3N_moB4GjC6wCj-zgKWa_K1F3P9TXyBBGgewHwv-3TH6ZVAHqsOlLt5UBlCWTfr_o_yQCp03VPe7YL0jI-gBvIlcxOotTXFUMUcW01CxXCLSimNvUSnQBkJi2XEkWRwvM3nSkjApOcgEPtt61szA-YnoinQFucSI4';
+        const response = await axios.get('https://api.spotify.com/v1/me/player/recently-played', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const tracks = response.data.items.map(item => ({
+          title: item.track.name,
+          subtitle: item.track.artists[0]?.name || "Unknown Artist",
+          image: { uri: item.track.album.images[0]?.url },
+          audio: item.track.preview_url || music,
+        }));
+
+        setRecentlyPlayed(tracks);
+
+      } catch (error) {
+        console.error('Error fetching playlist:', error.response?.data || error.message);
+      }
+    };
+
+    getRecentPlayed();
+  }, []);
 
   useEffect(() => {
     const fetchPlaylist = async () => {
       try {
-        const token = 'BQAU9DRmtj2lcNxTZkglobEEs1rwwzFQVKc5_l6HcQXlFfraaCJUe3e_t21CP4yYYF1dI8yKXFVcUdQ3LGLNmyLLEpIcJ7PZY5NiYZUY7vCMUWRW6LoC5-kEKcB8QlxVx-whVYipYHs';
+        const token = 'BQColrB3CNy2ISjcOZACfmXEBVDUGC1640_nUnPcBMf9U1YD5KCEWcsEP0q3_uoM6qu3roKbQVzqUZ48Aw3N_moB4GjC6wCj-zgKWa_K1F3P9TXyBBGgewHwv-3TH6ZVAHqsOlLt5UBlCWTfr_o_yQCp03VPe7YL0jI-gBvIlcxOotTXFUMUcW01CxXCLSimNvUSnQBkJi2XEkWRwvM3nSkjApOcgEPtt61szA-YnoinQFucSI4';
         const response = await axios.get('https://api.spotify.com/v1/playlists/3cEYpjA9oz9GiPac4AsH4n', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        const tracks = response.data.tracks.items.map((item) => ({
+        const tracks = response.data.tracks.items.map(item => ({
           title: item.track.name,
           subtitle: item.track.artists[0]?.name || "Unknown Artist",
           image: { uri: item.track.album.images[0]?.url },
-          audio: item.track.preview_url, 
+          audio: item.track.preview_url,
         }));
 
-        setPlaylist({
-          title: response.data.name,
-          items: tracks,
-        });
+        setPlaylist(tracks);
       } catch (error) {
         console.error('Error fetching playlist:', error.response?.data || error.message);
       }
@@ -77,7 +104,6 @@ const Home = () => {
 
     fetchPlaylist();
   }, []);
-
 
   const headerHeight = scrollY.interpolate({
     inputRange: [0, 100],
@@ -125,7 +151,7 @@ const Home = () => {
 
       {/* Main Content */}
       <Animated.ScrollView
-        contentContainerStyle={{ paddingBottom: 130, paddingHorizontal: 15 }}
+        contentContainerStyle={{ paddingBottom: 130, paddingHorizontal: 15, flexGrow: 1 }}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: false }
@@ -135,19 +161,18 @@ const Home = () => {
         className="bg-[#1B1A1C]"
       >
 
-        {sections.map((section, index) => (
+        {recentlyPlayed && (
           <SectionList
-            key={index}
-            title={section.title}
-            item={section.items}
-            subtitle={section.subtitle}
+            title='Recently Played'
+            item={recentlyPlayed}
           />
-        ))}
+        )}
+
 
         {playlist && (
           <SectionList
             title='Make monday more productive'
-            item={playlist.items}
+            item={playlist}
           />
         )}
 
@@ -180,7 +205,7 @@ const Home = () => {
           <SectionList
             title='Playlist picks'
             subtitle='Selected for you based on your recent activity'
-            item={playlist.items}
+            item={playlist}
           />
         )}
 
@@ -207,25 +232,25 @@ const Home = () => {
           contentContainerStyle={{ marginVertical: 25 }}
           showsHorizontalScrollIndicator={false}
         />
-        
+
         {playlist && (
           <SectionList
             title='New releases for you'
-            item={playlist.items}
+            item={playlist}
           />
         )}
 
         {playlist && (
           <CircularSection
             title='You might like these artists'
-            item={playlist.items}
+            item={playlist}
           />
         )}
 
         {playlist && (
           <SectionList
             title='Popular playlists'
-            item={playlist.items}
+            item={playlist}
           />
         )}
 

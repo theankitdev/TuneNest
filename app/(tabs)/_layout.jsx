@@ -4,8 +4,11 @@ import { Tabs } from 'expo-router'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MiniPlayer from '../../components/minPlayer'
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const _layout = () => {
+  const insets = useSafeAreaInsets();
+  
   return (
     <>
     <Tabs
@@ -15,7 +18,7 @@ const _layout = () => {
         headerShown: false,
         tabBarHideOnKeyboard: true,
         tabBarStyle: {
-          height: 75,
+          height: 75 + insets.bottom,
           position: 'absolute',
           alignItems: "flex-start",
           paddingLeft: 10,
