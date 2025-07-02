@@ -12,7 +12,7 @@ const redirectUri = AuthSession.makeRedirectUri({ useProxy: true });
 
 export const useGoogleAuth = () => {
   const [request, response, promptAsync] = Google.useAuthRequest({
-    expoClientId: "622837714980-uhgsshr6edqmq52ahimber2id2elhpsr.apps.googleusercontent.com",
+    expoClientId: "622837714980-73gmb1anfqfoq4rcncu6of9jenetvneo.apps.googleusercontent.com",
     androidClientId: "622837714980-k22bl0hasbvokf49p7f08hdkj48v81mk.apps.googleusercontent.com",
     webClientId: "622837714980-uhgsshr6edqmq52ahimber2id2elhpsr.apps.googleusercontent.com",
     scopes: ["profile", "email"],
