@@ -8,6 +8,7 @@ import googleIcon from '../../assets/images/google-logo.png';
 import facebookIcon from '../../assets/images/facebook-logo.png';
 import { FIREBASE_AUTH } from '../../FirebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useGoogleAuth } from '../../context/googleContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -16,7 +17,8 @@ const Login = () => {
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [loading, setLoading] = useState(false);
   const auth = FIREBASE_AUTH;
-
+  const { promptAsync, request} = useGoogleAuth()
+  
   const handleLogin = async () => {
     setLoading(true);
     try {
@@ -106,7 +108,9 @@ const Login = () => {
                 <Text className="text-[#FFFFFF] text-[18px] text-center font-LRegular flex-1">Log in with Facebook</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity className="flex-row w-[320px] h-[46px] bg-white rounded-full justify-center items-center px-[20px] m-2">
+              <TouchableOpacity className="flex-row w-[320px] h-[46px] bg-white rounded-full justify-center items-center px-[20px] m-2"
+                onPress={()=> promptAsync()}
+              >
                 <Image
                   source={googleIcon}
                   className="w-[24px] h-[24px] "
