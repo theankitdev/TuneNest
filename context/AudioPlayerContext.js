@@ -1,3 +1,4 @@
+// AudioPlayerContext.js
 import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
 import { Audio } from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,17 +10,20 @@ export const AudioPlayerProvider = ({ children }) => {
   const sound = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(null);
+  const [playlist, setPlaylist] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [isMiniPlayerVisible, setIsMiniPlayerVisible] = useState(false);
-  const [trackPositions, setTrackPositions] = useState({});
-
-  // Central shared slider state
   const [position, setPosition] = useState(0);
   const [duration, setDuration] = useState(1);
+  const [trackPositions, setTrackPositions] = useState({});
+  const [isRepeat, setIsRepeat] = useState(false);
 
   useEffect(() => {
     const loadPositions = async () => {
       const stored = await AsyncStorage.getItem('trackPositions');
-      if (stored) setTrackPositions(JSON.parse(stored));
+      if (stored) {
+        setTrackPositions(JSON.parse(stored));
+      }
     };
     loadPositions();
   }, []);
@@ -40,34 +44,78 @@ export const AudioPlayerProvider = ({ children }) => {
     }
   };
 
-  const onPlaybackStatusUpdate = (status) => {
-    if (!status.isLoaded) return;
-    setDuration(status.durationMillis || 1);
-    setPosition(status.positionMillis || 0);
-    setIsPlaying(status.isPlaying);
+  const setupPlaybackStatus = () => {
+    sound.current.setOnPlaybackStatusUpdate((status) => {
+      if (!status.isLoaded) return;
+
+      setPosition(status.positionMillis);
+      setDuration(status.durationMillis || 1);
+
+      if (status.didJustFinish) {
+        if (isRepeat) {
+          playAtIndex(currentIndex);
+        } else {
+          playNext();
+        }
+      }
+    });
   };
 
-  const loadAndPlayTrack = async (track) => {
-    if (sound.current) {
-      await sound.current.unloadAsync();
-      sound.current.setOnPlaybackStatusUpdate(null);
+  const loadAndPlayTrack = async (track, index = 0, list = []) => {
+    if (!track?.audio) {
+      console.warn('Track has no audio source:', track);
+      return;
     }
 
-    const { sound: newSound } = await Audio.Sound.createAsync(track.audio, {
-      shouldPlay: true,
-      positionMillis: 0, // Always start from beginning
-    });
+    try {
+      if (sound.current) {
+        await sound.current.unloadAsync();
+        sound.current.setOnPlaybackStatusUpdate(null);
+        sound.current = null;
+      }
 
-    sound.current = newSound;
-    sound.current.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
-    setCurrentTrack(track);
-    setIsPlaying(true);
-    setIsMiniPlayerVisible(true);
+      const source = typeof track.audio === 'string' ? { uri: track.audio } : track.audio;
+
+      const { sound: newSound } = await Audio.Sound.createAsync(source, {
+        shouldPlay: true,
+      });
+
+      sound.current = newSound;
+      setupPlaybackStatus();
+
+      setPlaylist(list);
+      setCurrentTrack(track);
+      setCurrentIndex(index);
+      setIsPlaying(true);
+      setIsMiniPlayerVisible(true);
+    } catch (error) {
+      console.log('Error loading track:', error);
+    }
+  };
+
+  const playAtIndex = (index) => {
+    const track = playlist[index];
+    if (track) {
+      loadAndPlayTrack(track, index, playlist);
+    }
+  };
+
+  const playNext = () => {
+    const nextIndex = currentIndex + 1;
+    if (nextIndex < playlist.length) {
+      playAtIndex(nextIndex);
+    }
+  };
+
+  const playPrevious = () => {
+    const prevIndex = currentIndex - 1;
+    if (prevIndex >= 0) {
+      playAtIndex(prevIndex);
+    }
   };
 
   const togglePlayPause = async () => {
     if (!sound.current) return;
-
     const status = await sound.current.getStatusAsync();
     if (!status.isLoaded) return;
 
@@ -80,12 +128,14 @@ export const AudioPlayerProvider = ({ children }) => {
     }
   };
 
-  const seekTo = async (value) => {
-    if (!sound.current) return;
-    await sound.current.setPositionAsync(value);
-    const status = await sound.current.getStatusAsync();
-    if (status.isLoaded && status.isPlaying) {
-      await sound.current.playAsync();
+  const toggleRepeat = () => {
+    setIsRepeat((prev) => !prev);
+  };
+
+  const seekTo = async (millis) => {
+    if (sound.current) {
+      await sound.current.setPositionAsync(millis);
+      setPosition(millis);
     }
   };
 
@@ -104,13 +154,23 @@ export const AudioPlayerProvider = ({ children }) => {
         sound,
         isPlaying,
         currentTrack,
+        playlist,
+        setPlaylist,
+        currentIndex,
         isMiniPlayerVisible,
         loadAndPlayTrack,
         togglePlayPause,
+        playNext,
+        playPrevious,
+        playAtIndex,
         setIsMiniPlayerVisible,
         position,
         duration,
         seekTo,
+        setPosition,
+        setDuration,
+        isRepeat,
+        toggleRepeat,
       }}
     >
       {children}

@@ -1,3 +1,4 @@
+// SectionList.js
 import { View, Text, FlatList, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -13,16 +14,8 @@ const SectionList = ({ title, item, subtitle }) => {
       return;
     }
 
-    loadAndPlayTrack(track);
-    router.push({
-      pathname: "/player",
-      params: {
-        title: track.title,
-        image: track.image,
-        audio: track.audio,
-        playlist: JSON.stringify(item)
-      },
-    });
+    loadAndPlayTrack(track, item.indexOf(track), item);
+    router.push("/player");
   };
 
   return (

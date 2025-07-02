@@ -19,13 +19,21 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import SongCarousel from "../../components/carousel";
 import { songs } from "../../components/Data";
 import { useAudioPlayer } from "../../context/AudioPlayerContext";
-import Collapsible from "react-native-collapsible";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 
 const ExpandableQueue = ({ currentTrack }) => {
-  const { isPlaying, togglePlayPause, duration } = useAudioPlayer();
+  const {
+    isPlaying,
+    togglePlayPause,
+    duration,
+    playlist,
+    playAtIndex,
+    setPlaylist,
+  } = useAudioPlayer();
   const [expanded, setExpanded] = useState(false);
+  const [isShuffled, setIsShuffled] = useState(false);
+  const [originalPlaylist, setOriginalPlaylist] = useState(songs);
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
 
   const formatTime = (millis) => {
@@ -55,6 +63,17 @@ const ExpandableQueue = ({ currentTrack }) => {
     });
   };
 
+  const handleShuffle = () => {
+    if (isShuffled) {
+      setPlaylist(originalPlaylist);
+    } else {
+      setOriginalPlaylist(playlist);
+      const shuffled = [...playlist].sort(() => Math.random() - 0.5);
+      setPlaylist(shuffled);
+    }
+    setIsShuffled(!isShuffled);
+  };
+
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: (_, gesture) => gesture.dy > 10,
@@ -79,22 +98,22 @@ const ExpandableQueue = ({ currentTrack }) => {
     <>
       {!expanded && (
         <View className="flex-1 justify-end ">
-        <TouchableOpacity
-          className="w-full bg-[#2B2B2D] px-6 py-4 flex-row justify-between"
-          style={{ borderTopLeftRadius: 15, borderTopRightRadius: 15 }}
-          onPress={expandQueue}
-        >
-          <View className="flex-row items-center space-x-3">
-            <MaterialIcons name="queue-music" size={25} color="#ccc" />
-            <Text
-              className="text-white font-LRegular text-[15px]"
-              numberOfLines={1}
-            >
-             {' '} Next Up: {songs[0]?.title} - {songs[0]?.artist}
-            </Text>
-          </View>
-          <Ionicons name="chevron-up" size={22} color="#ccc" />
-        </TouchableOpacity>
+          <TouchableOpacity
+            className="w-full bg-[#2B2B2D] px-6 py-4 flex-row justify-between"
+            style={{ borderTopLeftRadius: 15, borderTopRightRadius: 15 }}
+            onPress={expandQueue}
+          >
+            <View className="flex-row items-center space-x-3">
+              <MaterialIcons name="queue-music" size={25} color="#ccc" />
+              <Text
+                className="text-white font-LRegular text-[15px]"
+                numberOfLines={1}
+              >
+                {' '} Next Up: {playlist[0]?.title} - {playlist[0]?.artist}
+              </Text>
+            </View>
+            <Ionicons name="chevron-up" size={22} color="#ccc" />
+          </TouchableOpacity>
         </View>
       )}
 
@@ -115,77 +134,79 @@ const ExpandableQueue = ({ currentTrack }) => {
           {...panResponder.panHandlers}
         >
           <View className="w-full px-6 pt-6 flex-1">
-            {/* Pull Indicator */}
             <View className="w-14 h-1.5 bg-[#555] self-center rounded-full mb-4" />
-
-            {/* Now Playing */}
             <Text className="text-white font-LBold text-[16px] mb-3">
               Now Playing
             </Text>
 
             <View className=" flex-row items-center mb-6 mt-3">
               <Image
-              source={currentTrack?.image}
-              className="w-[45px] h-[45px] rounded-lg mr-3"
-              resizeMode="cover"
+                source={currentTrack?.image}
+                className="w-[45px] h-[45px] rounded-lg mr-3"
+                resizeMode="cover"
               />
               <View>
-            <Text className="text-white text-[15px] font-LRegular">
-              {currentTrack?.title} 
-            </Text>
-            <Text className="text-[#99999F] text-[13px] font-LRegular">
-              {currentTrack?.subtitle}  /  {formatTime(duration) || "3:45"}
-            </Text>
-            </View>
+                <Text className="text-white text-[15px] font-LRegular">
+                  {currentTrack?.title}
+                </Text>
+                <Text className="text-[#99999F] text-[13px] font-LRegular">
+                  {currentTrack?.artist}  /  {currentTrack?.duration || formatTime(duration)}
+                </Text>
+              </View>
             </View>
 
-            {/* Header Row */}
             <View className="flex-row justify-between items-center mb-4">
               <Text className="text-white font-LBold text-[16px]">Next Up</Text>
-              <TouchableOpacity className="flex-row justify-center items-center bg-[#3A3A3C] px-3 py-2 rounded-lg">
-                <Ionicons name="shuffle-outline" size={22} color="white" className="pr-2" />
-                <Text className="text-white font-LBold text-[16px]">SHUFFLE</Text>
+              <TouchableOpacity
+                onPress={handleShuffle}
+                className="flex-row justify-center items-center bg-[#3A3A3C] px-3 py-2 rounded-lg"
+              >
+                <Ionicons
+                  name={isShuffled ? "shuffle" : "shuffle-outline"}
+                  size={22}
+                  color={isShuffled ? "#2DCEEF" : "white"}
+                  style={{ marginRight: 6 }}
+                />
+                <Text className="text-white font-LBold text-[16px]">
+                  {isShuffled ? "SHUFFLED" : "SHUFFLE"}
+                </Text>
               </TouchableOpacity>
             </View>
 
-            {/* Song List */}
             <FlatList
-              data={songs}
+              data={playlist}
               keyExtractor={(item, index) => index.toString()}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ paddingBottom: 50, paddingHorizontal: 30 }}
-              renderItem={({ item }) => (
-                <View className="py-3 ">
+              renderItem={({ item, index }) => (
+                <TouchableOpacity
+                  className="py-3"
+                  onPress={() => playAtIndex(index)}
+                >
                   <Text className="text-white text-[15px] font-LRegular pb-2">{item.title}</Text>
                   <Text className="text-[#aaa] text-[14px] font-LRegular">
-                    {item.artist}   /  {item.duration}
+                    {item.artist}  /  {item.duration || "--:--"}
                   </Text>
-                </View>
+                </TouchableOpacity>
               )}
             />
             <View className="absolute bottom-6 left-0 right-0 px-6">
               <View className="flex-row items-center justify-center relative">
-                {/* Center Play/Pause Button */}
                 <TouchableOpacity onPress={togglePlayPause}>
                   <Ionicons
                     name={isPlaying ? "pause" : "play"}
                     size={35}
                     color="white"
-                    className=""
                   />
                 </TouchableOpacity>
-
-                {/* Skip Forward Button - Absolute Right */}
                 <TouchableOpacity
-                  onPress={() => { /* Next track logic */ }}
+                  onPress={() => playAtIndex((playlist.indexOf(currentTrack) + 1) % playlist.length)}
                   className="relative left-14"
                 >
                   <Ionicons name="play-skip-forward" size={30} color="white" />
                 </TouchableOpacity>
               </View>
             </View>
-
-
           </View>
         </Animated.View>
       )}
@@ -193,9 +214,7 @@ const ExpandableQueue = ({ currentTrack }) => {
   );
 };
 
-
 const Player = () => {
-  const { title, image } = useLocalSearchParams();
   const {
     isPlaying,
     togglePlayPause,
@@ -207,6 +226,12 @@ const Player = () => {
     sound,
     setPosition,
     setDuration,
+    playNext,
+    playPrevious,
+    currentIndex,
+    playAtIndex,
+    playlist,
+    loadAndPlayTrack,
   } = useAudioPlayer();
 
   const isMounted = useRef(true);
@@ -260,12 +285,11 @@ const Player = () => {
     if (!sound?.current) return;
 
     try {
-      await sound.current.setPositionAsync(value);
-      const status = await sound.current.getStatusAsync();
-      if (status.isLoaded && status.isPlaying) {
-        await sound.current.playAsync();
-      }
-      setPosition(value);
+     await seekTo(value); // This safely sets position
+const status = await sound.current.getStatusAsync();
+if (status.isLoaded && status.isPlaying) {
+  await sound.current.playAsync();
+}
       setDisplayPosition(value);
     } catch (error) {
       console.error("Seek failed:", error);
@@ -302,20 +326,13 @@ const Player = () => {
             </View>
           </View>
 
-          <SongCarousel item={songs} />
+          <SongCarousel
+            playlist={playlist}
+            currentIndex={currentIndex}
+            playAtIndex={playAtIndex}
+          />
 
           <View style={{ padding: 20 }}>
-            <View className="flex-row justify-between  mx-16 mt-4 mb-6" >
-            <TouchableOpacity>
-            <Ionicons name="add" color='white' size={25}/>
-            </TouchableOpacity>
-             <TouchableOpacity>
-            <Ionicons name="heart-outline" color='white' size={25}/>
-            </TouchableOpacity>
-             <TouchableOpacity>
-            <Ionicons name="ellipsis-vertical" color='white' size={24}/>
-            </TouchableOpacity>
-          </View>
             <Slider
               style={{ width: "100%", paddingTop: 5, height: 3 }}
               minimumValue={0}
@@ -336,35 +353,27 @@ const Player = () => {
             </View>
 
             <View className="flex-row justify-between items-center mt-6">
-              <TouchableOpacity>
-                <Ionicons name="shuffle" size={30} color="white" />
+              <TouchableOpacity onPress={playPrevious}>
+                <Ionicons name="play-skip-back" size={30} color="white" />
               </TouchableOpacity>
 
-              <View className="flex-row items-center">
-                <TouchableOpacity>
-                  <Ionicons size={30} color="white" />
-                </TouchableOpacity>
+              <TouchableOpacity
+                onPress={togglePlayPause}
+                style={{ marginHorizontal: 35 }}
+              >
+                <Ionicons
+                  name={isPlaying ? "pause" : "play"}
+                  size={40}
+                  color="white"
+                />
+              </TouchableOpacity>
 
-                <TouchableOpacity
-                  onPress={togglePlayPause}
-                  style={{ marginHorizontal: 35 }}
-                >
-                  <Ionicons
-                    name={isPlaying ? "pause" : "play"}
-                    size={40}
-                    color="white"
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity>
-                  <Ionicons name="play-skip-forward" size={30} color="white" />
-                </TouchableOpacity>
-              </View>
-
-              <TouchableOpacity>
-                <Ionicons name="repeat" size={30} color="white" />
+              <TouchableOpacity onPress={playNext}>
+                <Ionicons name="play-skip-forward" size={30} color="white" />
               </TouchableOpacity>
             </View>
           </View>
+
           <ExpandableQueue currentTrack={currentTrack} />
         </SafeAreaView>
       </ImageBackground>

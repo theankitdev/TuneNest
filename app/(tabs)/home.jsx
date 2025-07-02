@@ -55,24 +55,18 @@ const Home = () => {
   useEffect(() => {
     const getRecentPlayed = async () => {
       try {
-        const token = 'BQColrB3CNy2ISjcOZACfmXEBVDUGC1640_nUnPcBMf9U1YD5KCEWcsEP0q3_uoM6qu3roKbQVzqUZ48Aw3N_moB4GjC6wCj-zgKWa_K1F3P9TXyBBGgewHwv-3TH6ZVAHqsOlLt5UBlCWTfr_o_yQCp03VPe7YL0jI-gBvIlcxOotTXFUMUcW01CxXCLSimNvUSnQBkJi2XEkWRwvM3nSkjApOcgEPtt61szA-YnoinQFucSI4';
-        const response = await axios.get('https://api.spotify.com/v1/me/player/recently-played', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get('https://api.jamendo.com/v3.0/tracks/?client_id=3e2494c0&format=json&limit=5');
 
-        const tracks = response.data.items.map(item => ({
-          title: item.track.name,
-          subtitle: item.track.artists[0]?.name || "Unknown Artist",
-          image: { uri: item.track.album.images[0]?.url },
-          audio: item.track.preview_url || music,
+        const tracks = response.data.results.map(track => ({
+          title: track.name,
+          subtitle: track.artist_name,
+          image: { uri: track.album_image },
+          audio: track.audio || music,
         }));
 
         setRecentlyPlayed(tracks);
-
       } catch (error) {
-        console.error('Error fetching playlist:', error.response?.data || error.message);
+        console.error('Error fetching recently played:', error.response?.data || error.message);
       }
     };
 
@@ -82,19 +76,17 @@ const Home = () => {
   useEffect(() => {
     const fetchPlaylist = async () => {
       try {
-        const token = 'BQColrB3CNy2ISjcOZACfmXEBVDUGC1640_nUnPcBMf9U1YD5KCEWcsEP0q3_uoM6qu3roKbQVzqUZ48Aw3N_moB4GjC6wCj-zgKWa_K1F3P9TXyBBGgewHwv-3TH6ZVAHqsOlLt5UBlCWTfr_o_yQCp03VPe7YL0jI-gBvIlcxOotTXFUMUcW01CxXCLSimNvUSnQBkJi2XEkWRwvM3nSkjApOcgEPtt61szA-YnoinQFucSI4';
-        const response = await axios.get('https://api.spotify.com/v1/playlists/3cEYpjA9oz9GiPac4AsH4n', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get('https://api.jamendo.com/v3.0/tracks/?client_id=3e2494c0&format=json&limit=10');
 
-        const tracks = response.data.tracks.items.map(item => ({
-          title: item.track.name,
-          subtitle: item.track.artists[0]?.name || "Unknown Artist",
-          image: { uri: item.track.album.images[0]?.url },
-          audio: item.track.preview_url,
+        const tracks = response.data.results.map(track => ({
+          title: track.name,
+          artist: track.artist_name, // used in queue
+          subtitle: track.artist_name, // used in section display
+          duration: track.duration * 1000 , // Jamendo gives in seconds; convert to ms
+          image: { uri: track.album_image },
+          audio: track.audio || music,
         }));
+
 
         setPlaylist(tracks);
       } catch (error) {
