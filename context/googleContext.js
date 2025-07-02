@@ -2,6 +2,8 @@ import * as Google from 'expo-auth-session/providers/google';
 import { useEffect } from 'react';
 import { onAuthStateChanged, signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
 import { FIREBASE_AUTH } from '../FirebaseConfig';
+import * as AuthSession from 'expo-auth-session';
+
 
 const redirectUri = AuthSession.makeRedirectUri({ useProxy: true });
 
