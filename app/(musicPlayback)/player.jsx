@@ -30,9 +30,11 @@ const ExpandableQueue = ({ currentTrack }) => {
     playlist,
     playAtIndex,
     setPlaylist,
+    isShuffled,
+    toggleShuffle
   } = useAudioPlayer();
   const [expanded, setExpanded] = useState(false);
-  const [isShuffled, setIsShuffled] = useState(false);
+
   const [originalPlaylist, setOriginalPlaylist] = useState(songs);
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
 
@@ -150,7 +152,7 @@ const ExpandableQueue = ({ currentTrack }) => {
                   {currentTrack?.title}
                 </Text>
                 <Text className="text-[#99999F] text-[13px] font-LRegular">
-                  {currentTrack?.artist}  /  {currentTrack?.duration || formatTime(duration)}
+                  {currentTrack?.artist}  /  {formatTime(currentTrack?.duration)}
                 </Text>
               </View>
             </View>
@@ -158,7 +160,7 @@ const ExpandableQueue = ({ currentTrack }) => {
             <View className="flex-row justify-between items-center mb-4">
               <Text className="text-white font-LBold text-[16px]">Next Up</Text>
               <TouchableOpacity
-                onPress={handleShuffle}
+                onPress={toggleShuffle}
                 className="flex-row justify-center items-center bg-[#3A3A3C] px-3 py-2 rounded-lg"
               >
                 <Ionicons
@@ -185,7 +187,7 @@ const ExpandableQueue = ({ currentTrack }) => {
                 >
                   <Text className="text-white text-[15px] font-LRegular pb-2">{item.title}</Text>
                   <Text className="text-[#aaa] text-[14px] font-LRegular">
-                    {item.artist}  /  {item.duration || "--:--"}
+                    {item.artist}  /  {formatTime(item.duration)}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -232,6 +234,10 @@ const Player = () => {
     playAtIndex,
     playlist,
     loadAndPlayTrack,
+    isRepeat,
+    toggleRepeat,
+    isShuffled,
+    toggleShuffle,
   } = useAudioPlayer();
 
   const isMounted = useRef(true);
@@ -285,11 +291,11 @@ const Player = () => {
     if (!sound?.current) return;
 
     try {
-     await seekTo(value); // This safely sets position
-const status = await sound.current.getStatusAsync();
-if (status.isLoaded && status.isPlaying) {
-  await sound.current.playAsync();
-}
+      await seekTo(value); // This safely sets position
+      const status = await sound.current.getStatusAsync();
+      if (status.isLoaded && status.isPlaying) {
+        await sound.current.playAsync();
+      }
       setDisplayPosition(value);
     } catch (error) {
       console.error("Seek failed:", error);
@@ -308,7 +314,7 @@ if (status.isLoaded && status.isPlaying) {
         className="items-center"
         style={{ width: "100%", height: "100%" }}
         resizeMode="cover"
-        blurRadius={100}
+        blurRadius={20}
       >
         <SafeAreaView className="flex-1 pt-4">
           {/* Header */}
@@ -353,25 +359,47 @@ if (status.isLoaded && status.isPlaying) {
             </View>
 
             <View className="flex-row justify-between items-center mt-6">
-              <TouchableOpacity onPress={playPrevious}>
-                <Ionicons name="play-skip-back" size={30} color="white" />
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={togglePlayPause}
-                style={{ marginHorizontal: 35 }}
-              >
+              {/* Shuffle Button */}
+              <TouchableOpacity onPress={toggleShuffle}>
                 <Ionicons
-                  name={isPlaying ? "pause" : "play"}
-                  size={40}
-                  color="white"
+                  name={isShuffled ? "shuffle" : "shuffle-outline"}
+                  size={30}
+                  color={isShuffled ? "#2DCEEF" : "white"}
                 />
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={playNext}>
-                <Ionicons name="play-skip-forward" size={30} color="white" />
+              {/* Playback Controls */}
+              <View className="flex-row justify-center items-center">
+                <TouchableOpacity onPress={playPrevious}>
+                  <Ionicons name="play-skip-back" size={30} color="white" />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={togglePlayPause}
+                  style={{ marginHorizontal: 30 }}
+                >
+                  <Ionicons
+                    name={isPlaying ? "pause" : "play"}
+                    size={40}
+                    color="white"
+                  />
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={playNext}>
+                  <Ionicons name="play-skip-forward" size={30} color="white" />
+                </TouchableOpacity>
+              </View>
+
+              {/* Repeat Button */}
+              <TouchableOpacity onPress={toggleRepeat}>
+                <Ionicons
+                  name={isRepeat ? "repeat" : "repeat-outline"}
+                  size={30}
+                  color={isRepeat ? "#2DCEEF" : "white"}
+                />
               </TouchableOpacity>
             </View>
+
           </View>
 
           <ExpandableQueue currentTrack={currentTrack} />

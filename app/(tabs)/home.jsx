@@ -82,7 +82,7 @@ const Home = () => {
           title: track.name,
           artist: track.artist_name, // used in queue
           subtitle: track.artist_name, // used in section display
-          duration: track.duration * 1000 , // Jamendo gives in seconds; convert to ms
+          duration: track.duration * 1000, // Jamendo gives in seconds; convert to ms
           image: { uri: track.album_image },
           audio: track.audio || music,
         }));

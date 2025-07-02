@@ -1,4 +1,3 @@
-// AudioPlayerContext.js
 import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
 import { Audio } from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -11,12 +10,14 @@ export const AudioPlayerProvider = ({ children }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(null);
   const [playlist, setPlaylist] = useState([]);
+  const [originalPlaylist, setOriginalPlaylist] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMiniPlayerVisible, setIsMiniPlayerVisible] = useState(false);
   const [position, setPosition] = useState(0);
   const [duration, setDuration] = useState(1);
   const [trackPositions, setTrackPositions] = useState({});
   const [isRepeat, setIsRepeat] = useState(false);
+  const [isShuffled, setIsShuffled] = useState(false);
 
   useEffect(() => {
     const loadPositions = async () => {
@@ -132,6 +133,18 @@ export const AudioPlayerProvider = ({ children }) => {
     setIsRepeat((prev) => !prev);
   };
 
+  const toggleShuffle = () => {
+    if (isShuffled) {
+      setPlaylist(originalPlaylist);
+      setIsShuffled(false);
+    } else {
+      setOriginalPlaylist(playlist);
+      const shuffled = [...playlist].sort(() => Math.random() - 0.5);
+      setPlaylist(shuffled);
+      setIsShuffled(true);
+    }
+  };
+
   const seekTo = async (millis) => {
     if (sound.current) {
       await sound.current.setPositionAsync(millis);
@@ -171,6 +184,8 @@ export const AudioPlayerProvider = ({ children }) => {
         setDuration,
         isRepeat,
         toggleRepeat,
+        isShuffled,
+        toggleShuffle,
       }}
     >
       {children}
