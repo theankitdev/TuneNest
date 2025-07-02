@@ -12,18 +12,18 @@ export const AudioPlayerProvider = ({ children }) => {
   const [isMiniPlayerVisible, setIsMiniPlayerVisible] = useState(false);
   const [trackPositions, setTrackPositions] = useState({});
 
-  // Load stored positions (optional persistent)
+  // Central shared slider state
+  const [position, setPosition] = useState(0);
+  const [duration, setDuration] = useState(1);
+
   useEffect(() => {
     const loadPositions = async () => {
       const stored = await AsyncStorage.getItem('trackPositions');
-      if (stored) {
-        setTrackPositions(JSON.parse(stored));
-      }
+      if (stored) setTrackPositions(JSON.parse(stored));
     };
     loadPositions();
   }, []);
 
-  // Persist positions (optional)
   useEffect(() => {
     AsyncStorage.setItem('trackPositions', JSON.stringify(trackPositions));
   }, [trackPositions]);
@@ -40,27 +40,30 @@ export const AudioPlayerProvider = ({ children }) => {
     }
   };
 
- const loadAndPlayTrack = async (track) => {
-  if (sound.current) {
-    await sound.current.unloadAsync();
-    sound.current.setOnPlaybackStatusUpdate(null);
-    sound.current = null;
-  }
+  const onPlaybackStatusUpdate = (status) => {
+    if (!status.isLoaded) return;
+    setDuration(status.durationMillis || 1);
+    setPosition(status.positionMillis || 0);
+    setIsPlaying(status.isPlaying);
+  };
 
-  const { sound: newSound } = await Audio.Sound.createAsync(
-    track.audio,
-    {
-      shouldPlay: true,
-      positionMillis: 0, // 🔴 Always start from beginning
+  const loadAndPlayTrack = async (track) => {
+    if (sound.current) {
+      await sound.current.unloadAsync();
+      sound.current.setOnPlaybackStatusUpdate(null);
     }
-  );
 
-  sound.current = newSound;
-  setCurrentTrack(track);
-  setIsPlaying(true);
-  setIsMiniPlayerVisible(true);
-};
+    const { sound: newSound } = await Audio.Sound.createAsync(track.audio, {
+      shouldPlay: true,
+      positionMillis: 0, // Always start from beginning
+    });
 
+    sound.current = newSound;
+    sound.current.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+    setCurrentTrack(track);
+    setIsPlaying(true);
+    setIsMiniPlayerVisible(true);
+  };
 
   const togglePlayPause = async () => {
     if (!sound.current) return;
@@ -68,15 +71,24 @@ export const AudioPlayerProvider = ({ children }) => {
     const status = await sound.current.getStatusAsync();
     if (!status.isLoaded) return;
 
-    if (isPlaying) {
+    if (status.isPlaying) {
       await sound.current.pauseAsync();
+      setIsPlaying(false);
     } else {
       await sound.current.playAsync();
+      setIsPlaying(true);
     }
-    setIsPlaying(!isPlaying);
   };
 
-  // Unload and save when unmounting
+  const seekTo = async (value) => {
+    if (!sound.current) return;
+    await sound.current.setPositionAsync(value);
+    const status = await sound.current.getStatusAsync();
+    if (status.isLoaded && status.isPlaying) {
+      await sound.current.playAsync();
+    }
+  };
+
   useEffect(() => {
     return () => {
       saveTrackPosition();
@@ -96,6 +108,9 @@ export const AudioPlayerProvider = ({ children }) => {
         loadAndPlayTrack,
         togglePlayPause,
         setIsMiniPlayerVisible,
+        position,
+        duration,
+        seekTo,
       }}
     >
       {children}

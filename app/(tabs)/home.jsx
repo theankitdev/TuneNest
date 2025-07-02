@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import {
   Animated,
   View,
@@ -9,17 +9,101 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  BackHandler
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import Options from '../../components/options';
 import SectionList from '../../components/sectionList';
-import { router } from 'expo-router';
+import { router, useFocusEffect, usePathname } from 'expo-router';
 import { sections } from '../../components/Data';
 import { genre } from '../../assets/images/genres/genre';
+import CircularSection from '../../components/circularSectionList';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
+import music from '../../assets/music/sample.mp3';
+
+const useBackToHome = () => {
+  const pathname = usePathname();
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if (pathname !== '/home') {
+          router.replace('/home');
+        }
+        return true; // Always block default behavior (like exiting)
+      };
+
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => subscription.remove();
+    }, [pathname])
+  );
+};
 
 const Home = () => {
+
+  useBackToHome();
+
   const scrollY = useRef(new Animated.Value(0)).current;
+
+  const [playlist, setPlaylist] = useState(null);
+  const [recentlyPlayed, setRecentlyPlayed] = useState([]);
+
+  useEffect(() => {
+    const getRecentPlayed = async () => {
+      try {
+        const token = 'BQColrB3CNy2ISjcOZACfmXEBVDUGC1640_nUnPcBMf9U1YD5KCEWcsEP0q3_uoM6qu3roKbQVzqUZ48Aw3N_moB4GjC6wCj-zgKWa_K1F3P9TXyBBGgewHwv-3TH6ZVAHqsOlLt5UBlCWTfr_o_yQCp03VPe7YL0jI-gBvIlcxOotTXFUMUcW01CxXCLSimNvUSnQBkJi2XEkWRwvM3nSkjApOcgEPtt61szA-YnoinQFucSI4';
+        const response = await axios.get('https://api.spotify.com/v1/me/player/recently-played', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const tracks = response.data.items.map(item => ({
+          title: item.track.name,
+          subtitle: item.track.artists[0]?.name || "Unknown Artist",
+          image: { uri: item.track.album.images[0]?.url },
+          audio: item.track.preview_url || music,
+        }));
+
+        setRecentlyPlayed(tracks);
+
+      } catch (error) {
+        console.error('Error fetching playlist:', error.response?.data || error.message);
+      }
+    };
+
+    getRecentPlayed();
+  }, []);
+
+  useEffect(() => {
+    const fetchPlaylist = async () => {
+      try {
+        const token = 'BQColrB3CNy2ISjcOZACfmXEBVDUGC1640_nUnPcBMf9U1YD5KCEWcsEP0q3_uoM6qu3roKbQVzqUZ48Aw3N_moB4GjC6wCj-zgKWa_K1F3P9TXyBBGgewHwv-3TH6ZVAHqsOlLt5UBlCWTfr_o_yQCp03VPe7YL0jI-gBvIlcxOotTXFUMUcW01CxXCLSimNvUSnQBkJi2XEkWRwvM3nSkjApOcgEPtt61szA-YnoinQFucSI4';
+        const response = await axios.get('https://api.spotify.com/v1/playlists/3cEYpjA9oz9GiPac4AsH4n', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const tracks = response.data.tracks.items.map(item => ({
+          title: item.track.name,
+          subtitle: item.track.artists[0]?.name || "Unknown Artist",
+          image: { uri: item.track.album.images[0]?.url },
+          audio: item.track.preview_url,
+        }));
+
+        setPlaylist(tracks);
+      } catch (error) {
+        console.error('Error fetching playlist:', error.response?.data || error.message);
+      }
+    };
+
+    fetchPlaylist();
+  }, []);
 
   const headerHeight = scrollY.interpolate({
     inputRange: [0, 100],
@@ -67,7 +151,7 @@ const Home = () => {
 
       {/* Main Content */}
       <Animated.ScrollView
-        contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 15 }}
+        contentContainerStyle={{ paddingBottom: 130, paddingHorizontal: 15, flexGrow: 1 }}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: false }
@@ -76,16 +160,55 @@ const Home = () => {
         showsVerticalScrollIndicator={false}
         className="bg-[#1B1A1C]"
       >
-        {sections.map((section, index) => (
+
+        {recentlyPlayed && (
           <SectionList
-            key={index}
-            title={section.title}
-            item={section.items}
-            path='/player'
+            title='Recently Played'
+            item={recentlyPlayed}
           />
-        ))}
+        )}
+
+
+        {playlist && (
+          <SectionList
+            title='Make monday more productive'
+            item={playlist}
+          />
+        )}
 
         {/* Browse */}
+        <View>
+          <Text className="text-white font-LBold text-[20px] pb-2">Browse</Text>
+          <Text className="text-[14px] font-LRegular text-[#99999F]">Explore by genre and mood</Text>
+        </View>
+        <FlatList
+          data={genre}
+          horizontal
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={{ marginRight: 15 }}
+              onPress={() => router.push({ pathname: '/podcasts', params: { title: item.title, image: item.image } })}
+            >
+              <Image
+                source={item.image}
+                style={{ width: '151', height: 90, borderRadius: 10 }}
+                resizeMode="cover"
+              />
+            </TouchableOpacity>
+          )}
+          contentContainerStyle={{ marginVertical: 25 }}
+          showsHorizontalScrollIndicator={false}
+        />
+
+        {playlist && (
+          <SectionList
+            title='Playlist picks'
+            subtitle='Selected for you based on your recent activity'
+            item={playlist}
+          />
+        )}
+
         <View>
           <Text className="text-white font-LBold text-[20px] pb-2">Podcasts</Text>
           <Text className="text-[14px] font-LRegular text-[#99999F]">Explore by categories and popularity</Text>
@@ -109,6 +232,27 @@ const Home = () => {
           contentContainerStyle={{ marginVertical: 25 }}
           showsHorizontalScrollIndicator={false}
         />
+
+        {playlist && (
+          <SectionList
+            title='New releases for you'
+            item={playlist}
+          />
+        )}
+
+        {playlist && (
+          <CircularSection
+            title='You might like these artists'
+            item={playlist}
+          />
+        )}
+
+        {playlist && (
+          <SectionList
+            title='Popular playlists'
+            item={playlist}
+          />
+        )}
 
       </Animated.ScrollView>
 
