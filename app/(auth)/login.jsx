@@ -14,9 +14,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import googleIcon from "../../assets/images/google-logo.png";
 import facebookIcon from "../../assets/images/facebook-logo.png";
+import { router } from "expo-router";
 import { FIREBASE_AUTH } from "../../FirebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useGoogleAuth } from "../../context/googleContext";
+import { FacebookLogin } from "../../context/facebookContext";
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -26,6 +28,7 @@ const Login = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const auth = FIREBASE_AUTH;
   const { promptAsync } = useGoogleAuth();
+  const { facebookpromptAsync } = FacebookLogin();
 
   const handleLogin = async () => {
     setLoading(true);
@@ -37,6 +40,14 @@ const Login = ({ navigation }) => {
       Alert.alert("Login Failed", error.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handlefacebookSignIn = async () => {
+    try {
+      await facebookpromptAsync();
+    } catch (error) {
+      Alert.alert("Google Sign-In Failed", error.message);
     }
   };
 
@@ -143,7 +154,7 @@ const Login = ({ navigation }) => {
             <View className="justify-center items-center h-[200px]">
               <TouchableOpacity
                 className="flex-row w-[320px] h-[46px] bg-[#4267B2] rounded-full justify-center items-center px-[20px] m-2"
-                onPress={() => console.log("Facebook login pressed")}
+                onPress={handlefacebookSignIn}
               >
                 <Image
                   source={facebookIcon}
@@ -174,9 +185,9 @@ const Login = ({ navigation }) => {
             {/* Sign up link */}
             <View className="flex-row justify-center mt-4">
               <Text className="text-white font-LRegular">
-                Don't have an account?{" "}
+                Don't have an account?{"  "}
               </Text>
-              <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
+              <TouchableOpacity onPress={() => router.replace("/signup")}>
                 <Text className="text-white font-LBold underline">Sign up</Text>
               </TouchableOpacity>
             </View>
