@@ -7,7 +7,7 @@ import {
 import { FIREBASE_AUTH } from "../FirebaseConfig";
 import * as AuthSession from "expo-auth-session";
 
-// ✅ Use proxy redirect URI for Expo Go
+// ✅ Use proxy redirect URI for 
 const redirectUri = AuthSession.makeRedirectUri({ useProxy: true });
 
 export const useGoogleAuth = () => {
