@@ -177,13 +177,8 @@ const PodcastPage = () => {
                     </View>
 
                      <View className="flex-row justify-center items-center py-6 mt-5 w-full">
-                    <TouchableOpacity>
                         <Text className="text-white text-[16px] font-LRegular text-center mx-4">Episodes</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity>
-                        <Text className="text-white text-[16px] font-LRegular mx-4">About</Text>
-                    </TouchableOpacity>
-                </View>
+                    </View>
                 </View>
 
             {/* Song List */}

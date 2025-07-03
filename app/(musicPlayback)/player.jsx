@@ -111,7 +111,7 @@ const ExpandableQueue = ({ currentTrack }) => {
                 className="text-white font-LRegular text-[15px]"
                 numberOfLines={1}
               >
-                {' '} Next Up: {playlist[0]?.title} - {playlist[0]?.artist}
+                Next Up: {playlist[(playlist.indexOf(currentTrack) + 1) % playlist.length]?.title} - {playlist[(playlist.indexOf(currentTrack) + 1) % playlist.length]?.artist}
               </Text>
             </View>
             <Ionicons name="chevron-up" size={22} color="#ccc" />

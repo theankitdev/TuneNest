@@ -1,26 +1,31 @@
-// SectionList.js
 import { View, Text, FlatList, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { router } from "expo-router";
-import { useAudioPlayer } from "../context/AudioPlayerContext";
 
-const SectionList = ({ title, item, subtitle }) => {
-  const { loadAndPlayTrack } = useAudioPlayer();
+const SectionList = ({ title, item, subtitle, pathname = "/playlist" }) => {
+  const handleNavigate = () => {
+    if (!item || item.length === 0) return;
 
-  const handlePlay = (track) => {
-    if (!track?.audio) {
-      console.warn("Missing audio in track:", track);
-      return;
-    }
-
-    loadAndPlayTrack(track, item.indexOf(track), item);
-    router.push("/player");
+    router.push({
+      pathname,
+      params: {
+        title,
+        item: JSON.stringify(item), // route params must be string
+      },
+    });
   };
 
   return (
     <View className="mb-4 mt-2">
-      <Text className="text-white font-LBold text-[18px]">{title}</Text>
+      <View className="flex-row justify-between items-center">
+        <Text className="text-white font-LBold text-[18px]">{title}</Text>
+
+        {/* Optional "See All" Button */}
+        <TouchableOpacity onPress={handleNavigate}>
+          <Text className="text-blue-400 text-[12px] font-LBold">See All</Text>
+        </TouchableOpacity>
+      </View>
 
       {subtitle && (
         <Text className="text-[#99999F] font-LRegular text-[14px] mt-2">
@@ -32,10 +37,10 @@ const SectionList = ({ title, item, subtitle }) => {
         horizontal
         showsHorizontalScrollIndicator={false}
         data={item}
-        keyExtractor={(items, index) => `${title}-${index}`}
+        keyExtractor={(_, index) => `${title}-${index}`}
         contentContainerStyle={{ gap: 16, paddingBottom: 20, marginTop: 22 }}
         renderItem={({ item: track }) => (
-          <TouchableOpacity onPress={() => handlePlay(track)}>
+          <TouchableOpacity onPress={handleNavigate}>
             <Image
               source={track.image}
               className="w-full h-[100px] rounded-lg mb-2 mt-1"
@@ -68,6 +73,15 @@ const SectionList = ({ title, item, subtitle }) => {
                   {track.likes || "12.5K"}
                 </Text>
               </View>
+            )}
+
+            {track.releaseDate && (
+              <Text
+                className="text-[#99999F] font-LRegular text-[10px] mt-1"
+                numberOfLines={1}
+              >
+                Album release: {track.releaseDate}
+              </Text>
             )}
           </TouchableOpacity>
         )}

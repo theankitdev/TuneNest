@@ -24,33 +24,13 @@ import axios from 'axios';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import music from '../../assets/music/sample.mp3';
 
-const useBackToHome = () => {
-  const pathname = usePathname();
-
-  useFocusEffect(
-    useCallback(() => {
-      const onBackPress = () => {
-        if (pathname !== '/home') {
-          router.replace('/home');
-        }
-        return true; // Always block default behavior (like exiting)
-      };
-
-      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
-
-      return () => subscription.remove();
-    }, [pathname])
-  );
-};
-
 const Home = () => {
-
-  useBackToHome();
 
   const scrollY = useRef(new Animated.Value(0)).current;
 
   const [playlist, setPlaylist] = useState(null);
   const [recentlyPlayed, setRecentlyPlayed] = useState([]);
+  const [artist, setArtist] = useState([]);
 
   useEffect(() => {
     const getRecentPlayed = async () => {
@@ -96,6 +76,41 @@ const Home = () => {
 
     fetchPlaylist();
   }, []);
+
+  useEffect(() => {
+  const fetchArtist = async () => {
+    try {
+      const response = await axios.get(
+        'https://api.jamendo.com/v3.0/artists/tracks/?client_id=3e2494c0&format=json&limit=10'
+      );
+
+      const artists = response.data.results;
+
+      const grouped = artists.map((artist) => {
+        const tracks = artist.tracks.map((track) => ({
+          title: track.name,
+          subtitle: artist.name,
+          artist: artist.name,
+          duration: Number(track.duration) * 1000,
+          image: { uri: track.album_image || artist.image },
+          audio: track.audio,
+        }));
+
+        return {
+          artist: artist.name,
+          image: { uri: artist.image },
+          tracks, // array of this artist's tracks
+        };
+      });
+
+      setArtist(grouped); // set as array of artist objects
+    } catch (error) {
+      console.error('Error fetching artists:', error.response?.data || error.message);
+    }
+  };
+
+  fetchArtist();
+}, []);
 
   const headerHeight = scrollY.interpolate({
     inputRange: [0, 100],
@@ -157,6 +172,7 @@ const Home = () => {
           <SectionList
             title='Recently Played'
             item={recentlyPlayed}
+            pathname='/playlistPage'
           />
         )}
 
@@ -165,6 +181,7 @@ const Home = () => {
           <SectionList
             title='Make monday more productive'
             item={playlist}
+            pathname='/playlistPage'
           />
         )}
 
@@ -198,9 +215,11 @@ const Home = () => {
             title='Playlist picks'
             subtitle='Selected for you based on your recent activity'
             item={playlist}
+            pathname='/playlistPage'
           />
         )}
 
+        {/* Podcast */}
         <View>
           <Text className="text-white font-LBold text-[20px] pb-2">Podcasts</Text>
           <Text className="text-[14px] font-LRegular text-[#99999F]">Explore by categories and popularity</Text>
@@ -229,13 +248,15 @@ const Home = () => {
           <SectionList
             title='New releases for you'
             item={playlist}
+            pathname='/playlistPage'
           />
         )}
 
-        {playlist && (
+        {artist && (
           <CircularSection
             title='You might like these artists'
-            item={playlist}
+            item={artist}
+            pathname='/playlistPage'
           />
         )}
 
@@ -243,6 +264,7 @@ const Home = () => {
           <SectionList
             title='Popular playlists'
             item={playlist}
+            pathname='/playlistPage'
           />
         )}
 
