@@ -5,6 +5,7 @@ import { SplashScreen, Stack } from 'expo-router';
 import { AudioPlayerProvider } from '../context/AudioPlayerContext';
 import '../global.css';
 import MiniPlayer from '../components/minPlayer';
+import { AuthProvider } from '../context/authContext';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -32,6 +33,7 @@ const RootLayout = () => {
   if (!fontsLoaded) return null;
 
   return (
+    <AuthProvider>
     <AudioPlayerProvider>
       <Stack screenOptions={{ animation: 'none', gestureEnabled: false }}>
         <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -45,6 +47,7 @@ const RootLayout = () => {
       </Stack>
       <MiniPlayer />
     </AudioPlayerProvider>
+    </AuthProvider>
   );
 };
 

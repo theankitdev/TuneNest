@@ -3,10 +3,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import playlist from '../../assets/images/playlist.png';
-import albumIcon from '../../assets/images/albumIcon.png';
-import SongList from '../../components/songList'; 
-import {songs} from '../../components/Data.js'; // Assuming you have a song image
+import playlist from '../../../assets/images/playlist.png';
+import albumIcon from '../../../assets/images/albumIcon.png';
+import SongList from '../../../components/songList.jsx'; 
+import {songs} from '../../../components/Data.js'; // Assuming you have a song image
 
 const Library = () => {
   const router = useRouter();

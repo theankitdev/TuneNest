@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "TuneNest",
-    "slug": "TuneNest",
+    "slug": "tunenest",
     "owner": "ankitsharma001",
     "scheme": "tunenest",
     "version": "1.0.0",
@@ -16,7 +16,18 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.kumarankit783821.TuneNest"
+      "bundleIdentifier": "com.kumarankit783821.TuneNest",
+      "infoPlist": {
+        "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you.",
+        "SKAdNetworkItems": [
+          {
+            "SKAdNetworkIdentifier": "v9wttpbfk9.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
+          }
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -47,7 +58,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "e2388372-4357-4de6-96b8-fc19b0dc8c97"
+        "projectId": "1bd1d3fa-d3b3-4d65-bc71-e76a88eaf898"
       }
     }
   }

@@ -4,9 +4,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import facebookIcon from '../assets/images/facebook-logo.png';
 import googleIcon from '../assets/images/google-logo.png';
+import { useAuth } from '../context/authContext';
+import { useEffect } from 'react';
 
 export default function App() {
-  
+  const { user, loading } = useAuth();
+
+   useEffect(() => {
+    if (user) {
+      // If user exists, redirect to home
+      router.replace('/home');
+    }
+  }, [user]);
+
   return (
     <SafeAreaView className="flex bg-[#1B1A1C] pb-8">
       <StatusBar  style='light' />
@@ -42,7 +52,7 @@ export default function App() {
           </TouchableOpacity>
 
           <TouchableOpacity className="flex-row w-[320px] h-[46px] bg- rounded-full justify-center items-center pl-[12px] m-2 border border-white"
-          onPress={() => router.replace('/home')}
+          onPress={() => router.push('/signup')}
           >
             <Text className="text-[#FFFFFF] text-[18px] text-center font-LRegular flex-1">  Sign up with Email</Text>
           </TouchableOpacity>
