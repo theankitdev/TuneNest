@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
   // Custom login method (using your API)
   const login = async (email, password) => {
     try {
-      const res = await axios.post('http://192.168.1.39:5000/api/v1/user/login', {
+      const res = await axios.post('https://tunenest-backend.onrender.com/api/v1/user/login', {
         email,
         password,
       });

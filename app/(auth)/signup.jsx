@@ -55,7 +55,7 @@ const SignUp = () => {
     }
     setLoading(true);
     try {
-      const response = await axios.post('http://192.168.1.39:5000/api/v1/user/register', {
+      const response = await axios.post('https://tunenest-backend.onrender.com/api/v1/user/register', {
         firstName,
         lastName,
         email,

@@ -5,20 +5,11 @@ import { SplashScreen, Stack } from 'expo-router';
 import { AudioPlayerProvider } from '../context/AudioPlayerContext';
 import '../global.css';
 import MiniPlayer from '../components/minPlayer';
-import { useAuth, AuthProvider } from '../context/authContext';
+import { AuthProvider } from '../context/authContext';
 
 SplashScreen.preventAutoHideAsync();
 
 const RootLayout = () => {
-
-  const { user, loading } = useAuth();
-  useEffect(() => {
-    if (user) {
-      // If user exists, redirect to home
-      router.replace('/home');
-    }
-  }, [user]);
-
 
   const [fontsLoaded, error] = useFonts({
     'Lato-Black': require('../assets/fonts/Lato-Black.ttf'),
