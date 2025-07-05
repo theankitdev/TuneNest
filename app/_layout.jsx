@@ -12,7 +12,7 @@ SplashScreen.preventAutoHideAsync();
 const RootLayout = () => {
 
   const { user, loading } = useAuth();
- useEffect(() => {
+  useEffect(() => {
     if (user) {
       // If user exists, redirect to home
       router.replace('/home');
