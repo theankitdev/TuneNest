@@ -8,15 +8,7 @@ import { useAuth } from '../context/authContext';
 import { useEffect } from 'react';
 
 export default function App() {
-  const { user, loading } = useAuth();
-
-   useEffect(() => {
-    if (user) {
-      // If user exists, redirect to home
-      router.replace('/home');
-    }
-  }, [user]);
-
+  
   return (
     <SafeAreaView className="flex bg-[#1B1A1C] pb-8">
       <StatusBar  style='light' />

@@ -55,7 +55,7 @@ const CustomDrawerContent = (props) => {
           style={styles.avatar}
         />
         <View style={{ marginLeft: 10 }}>
-          <Text style={styles.name}>{user?.email || 'Your Name'}</Text>
+          <Text style={styles.name}>{user?.firstName} {user?.lastName}</Text>
           <Text style={styles.viewProfile}>View Profile</Text>
         </View>
       </TouchableOpacity>

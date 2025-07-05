@@ -6,6 +6,9 @@ const _layout = () => {
   return (
     <Stack screenOptions={{headerShown:false, animation: 'none', gestureEnabled: false}}>
         <Stack.Screen name='playlistPage'/>
+        <Stack.Screen name='artistPage' />
+        <Stack.Screen name='alubumPage' />
+        <Stack.Screen name='podcastPage' />
     </Stack>
   )
 }

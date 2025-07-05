@@ -1,24 +1,9 @@
-// SectionList.js
 import { View, Text, FlatList, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { router } from "expo-router";
-import { useAudioPlayer } from "../context/AudioPlayerContext";
 
 const CircularSection = ({ title, item, subtitle, pathname }) => {
-  const { loadAndPlayTrack } = useAudioPlayer();
-
-  const handlePlay = (artist) => {
-    const firstTrack = artist.tracks[0];
-    if (!firstTrack?.audio) {
-      console.warn("Missing audio in track:", firstTrack);
-      return;
-    }
-
-    loadAndPlayTrack(firstTrack, 0, artist.tracks); // Pass artist's full track list
-    router.push(pathname);
-  };
-
   return (
     <View className="mb-4 mt-2">
       <Text className="text-white font-LBold text-[18px]">{title}</Text>
@@ -36,9 +21,22 @@ const CircularSection = ({ title, item, subtitle, pathname }) => {
         keyExtractor={(artist, index) => `${title}-${index}`}
         contentContainerStyle={{ gap: 16, paddingBottom: 20, marginTop: 22 }}
         renderItem={({ item: artist }) => (
-          <TouchableOpacity onPress={() => handlePlay(artist)}>
+          <TouchableOpacity
+            onPress={() => {
+              if (!artist.tracks || artist.tracks.length === 0) return;
+
+              router.push({
+                pathname,
+                params: {
+                  title: artist.artist,
+                  image: artist.image,
+                  item: JSON.stringify(artist.tracks),
+                },
+              });
+            }}
+          >
             <Image
-              source={artist.image}
+              source={{ uri: artist.image }}
               className="w-full h-[100px] rounded-full mb-2 mt-1"
               style={{ width: 145, height: 145 }}
               resizeMode="cover"

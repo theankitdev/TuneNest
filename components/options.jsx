@@ -18,10 +18,24 @@ const Options = ({ options }) => {
           <Pressable
             key={index}
             className="justify-center items-center"
-            onPress={() => item.path && router.replace({ pathname: item.path, params: item.params })}
+            onPress={() => {
+              if (!item.path) return;
+
+              const isHome = pathname === '/home';
+              const navigationMethod = isHome ? router.push : router.replace;
+
+              navigationMethod({
+                pathname: item.path,
+                params: item.params,
+              });
+            }}
           >
             <View className="relative items-center">
-              <Text className={`text-[14px] font-LBold mb-2 ${isActive ? 'text-white' : 'text-[#99999F]'}`}>
+              <Text
+                className={`text-[14px] font-LBold mb-2 ${
+                  isActive ? 'text-white' : 'text-[#99999F]'
+                }`}
+              >
                 {item.label}
               </Text>
               {isActive && (

@@ -20,11 +20,6 @@ const SectionList = ({ title, item, subtitle, pathname = "/playlist" }) => {
     <View className="mb-4 mt-2">
       <View className="flex-row justify-between items-center">
         <Text className="text-white font-LBold text-[18px]">{title}</Text>
-
-        {/* Optional "See All" Button */}
-        <TouchableOpacity onPress={handleNavigate}>
-          <Text className="text-blue-400 text-[12px] font-LBold">See All</Text>
-        </TouchableOpacity>
       </View>
 
       {subtitle && (

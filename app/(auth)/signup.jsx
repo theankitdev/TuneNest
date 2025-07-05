@@ -8,16 +8,28 @@ import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import { router } from 'expo-router';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const SignUp = () => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [createPassword, setCreatePassword] = useState('');
   const [dob, setDob] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [gender, setGender] = useState('');
+  const [firstNameFocused, setFirstNameFocused] = useState(false);
+  const [lastNameFocused, setLastNameFocused] = useState(false);
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [gender, setGender] = useState(null);
+  const [genderItems, setGenderItems] = useState([
+    { label: 'Male', value: 'Male' },
+    { label: 'Female', value: 'Female' },
+    { label: 'Other', value: 'Other' },
+  ]);
+
 
   const handleDateChange = (event, selectedDate) => {
     setShowDatePicker(false);
@@ -44,6 +56,8 @@ const SignUp = () => {
     setLoading(true);
     try {
       const response = await axios.post('http://192.168.1.39:5000/api/v1/user/register', {
+        firstName,
+        lastName,
         email,
         password: createPassword,
         dob,
@@ -55,7 +69,6 @@ const SignUp = () => {
     } catch (error) {
       console.error('Registration Failed:', error.response?.data || error.message);
       alert('Registration failed. Please try again.');
-      setLoading(false);
     } finally {
       setLoading(false);
     }
@@ -78,6 +91,46 @@ const SignUp = () => {
             </View>
 
             <View className="flex-1 space-x-4 px-4">
+              {/* First Name */}
+              <View className="mb-4 justify-center">
+                <Text className="text-white text-[16px] font-LRegular mb-2">Your first name</Text>
+                <TextInput
+                  className={`w-full h-[46px] rounded-lg px-4 py-2 font-LRegular text-[14px] bg-[#ffffff] ${firstNameFocused ? 'opacity-[0.7]' : 'opacity-[0.4]'}`}
+                  onFocus={() => setFirstNameFocused(true)}
+                  onBlur={() => setFirstNameFocused(false)}
+                  value={firstName}
+                  onChangeText={setFirstName}
+                />
+                {firstName.length > 0 && (
+                  <Ionicons
+                    name="checkmark"
+                    size={24}
+                    color="#000"
+                    style={{ position: 'absolute', right: 10, top: 35 }}
+                  />
+                )}
+              </View>
+
+              {/* Last Name */}
+              <View className="mb-4 justify-center">
+                <Text className="text-white text-[16px] font-LRegular mb-2">Your last name</Text>
+                <TextInput
+                  className={`w-full h-[46px] rounded-lg px-4 py-2 font-LRegular text-[14px] bg-[#ffffff] ${lastNameFocused ? 'opacity-[0.7]' : 'opacity-[0.4]'}`}
+                  onFocus={() => setLastNameFocused(true)}
+                  onBlur={() => setLastNameFocused(false)}
+                  value={lastName}
+                  onChangeText={setLastName}
+                />
+                {lastName.length > 0 && (
+                  <Ionicons
+                    name="checkmark"
+                    size={24}
+                    color="#000"
+                    style={{ position: 'absolute', right: 10, top: 35 }}
+                  />
+                )}
+              </View>
+
               {/* Email */}
               <View className="mb-4 justify-center">
                 <Text className="text-white text-[16px] font-LRegular mb-2">Your email</Text>
@@ -131,6 +184,7 @@ const SignUp = () => {
                     className="rounded-lg border border-white px-4 justify-center h-[46px]"
                   >
                     <Text style={{ font: 'LRegular', fontSize: 16, color: 'white' }}>{dob}</Text>
+                    <Ionicons name="chevron-down-outline" size={24} color="white" style={{ position: 'absolute', right: 10, top: 10, opacity: 0.8 }} />
                   </Pressable>
 
                   {showDatePicker && (
@@ -142,36 +196,41 @@ const SignUp = () => {
                       onChange={handleDateChange}
                     />
                   )}
-
-                  <Ionicons name="chevron-down-outline" size={24} color="white" style={{ position: 'absolute', right: 10, top: 35, opacity: 0.8 }} />
                 </View>
 
                 {/* Gender */}
                 <View className="w-[45%] ml-2">
                   <Text className="text-white font-LRegular text-[16px] mb-2">Gender</Text>
-                  <View className="rounded-lg border border-white h-[46px] justify-center">
-                    <Picker
-                      selectedValue={gender}
-                      onValueChange={(itemValue) => setGender(itemValue)}
-                      style={{
-                        height: 56,
-                        fontSize: 16,
-                        paddingVertical: 0,
-                        marginVertical: -8,
-                        color: 'white',
-                        fontFamily: 'LRegular',
-                        backgroundColor: 'transparent',
-                      }}
-                      itemStyle={{ height: 30 }}
-                    >
-                      <Picker.Item label="" value="" />
-                      <Picker.Item label="Male" value="Male" />
-                      <Picker.Item label="Female" value="Female" />
-                      <Picker.Item label="Other" value="Other" />
-                    </Picker>
-                    <Ionicons name="chevron-down-outline" size={24} color="white" style={{ position: 'absolute', right: 10, opacity: 0.8 }} pointerEvents="none" />
-                  </View>
+                  <DropDownPicker
+                    open={open}
+                    value={gender}
+                    items={genderItems}
+                    setOpen={setOpen}
+                    setValue={setGender}
+                    setItems={setGenderItems}
+                    placeholder=" "
+                    style={{
+                      backgroundColor: 'transparent',
+                      borderRadius: 8,
+                      borderWidth: 1,
+                      borderColor: 'white',
+                    }}
+                    textStyle={{
+                      fontSize: 16,
+                      fontFamily: 'Lato-Regular',
+                      color: 'white',
+                    }}
+                    dropDownContainerStyle={{
+                      backgroundColor: '#1B1A1C',
+                      borderColor: '#ccc',
+                    }}
+                    showArrowIcon={false}
+                    listMode="SCROLLVIEW"
+                    scrollEnabled={false}
+                  />
+                  <Ionicons name="chevron-down-outline" size={24} color="white" style={{ position: 'absolute', right: 10, bottom: 12, opacity: 0.8 }} />
                 </View>
+
               </View>
 
               {/* Done Button */}

@@ -5,11 +5,17 @@ import { StatusBar } from 'expo-status-bar';
 import { useLocalSearchParams, router } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { BlurView } from 'expo-blur';
-import { useAudioPlayer } from '../../context/AudioPlayerContext'; // adjust path
+import { useAudioPlayer } from '../../context/AudioPlayerContext';
 
 const PlaylistPage = () => {
   const { title, item: itemString } = useLocalSearchParams();
-  const item = JSON.parse(itemString);
+  let item = JSON.parse(itemString);
+
+  // Ensure item is always an array (in case only one track was passed)
+  if (!Array.isArray(item)) {
+    item = [item];
+  }
+
   const scrollY = useRef(new Animated.Value(0)).current;
   const { loadAndPlayTrack } = useAudioPlayer();
 
@@ -33,6 +39,7 @@ const PlaylistPage = () => {
   });
 
   const formatDuration = (ms) => {
+    if (!ms || isNaN(ms)) return '0:00';
     const minutes = Math.floor(ms / 60000);
     const seconds = Math.floor((ms % 60000) / 1000);
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
@@ -41,7 +48,6 @@ const PlaylistPage = () => {
   return (
     <>
       <StatusBar style="light" />
-
       {/* Animated Header */}
       <Animated.View style={{ height: headerHeight, overflow: 'hidden' }}>
         <ImageBackground
@@ -69,7 +75,7 @@ const PlaylistPage = () => {
             </Animated.Text>
           </SafeAreaView>
 
-          {/* Buttons */}
+          {/* Follow & Play Buttons */}
           <View className="flex-row items-center justify-around pb-4">
             <TouchableOpacity className="flex-row items-center">
               <Ionicons name="heart-outline" size={18} color="white" />
@@ -78,7 +84,7 @@ const PlaylistPage = () => {
             <TouchableOpacity
               className="flex-row items-center"
               onPress={() => {
-                loadAndPlayTrack(item[0], 0, item); // play first track
+                loadAndPlayTrack(item[0], 0, item);
                 router.push('/player');
               }}
             >
@@ -89,6 +95,7 @@ const PlaylistPage = () => {
         </ImageBackground>
       </Animated.View>
 
+      <View className="flex-1 bg-[#1B1A1C]">
       {/* Song List */}
       <Animated.FlatList
         data={item}
@@ -126,8 +133,10 @@ const PlaylistPage = () => {
               resizeMode="cover"
             />
             <View className="pl-1">
-              <Text className="text-[14px] text-white font-LRegular mb-1">{track.title}</Text>
-              <Text className="text-[13px] text-[#99999F] font-LRegular">
+              <Text className="text-[14px] text-white font-LRegular mb-1" numberOfLines={1}>
+                {track.title}
+              </Text>
+              <Text className="text-[13px] text-[#99999F] font-LRegular" numberOfLines={1}>
                 {track.artist} / {formatDuration(track.duration)}
               </Text>
             </View>
@@ -152,7 +161,9 @@ const PlaylistPage = () => {
             </Text>
           </BlurView>
         }
+        showsVerticalScrollIndicator={false}
       />
+      </View>
     </>
   );
 };

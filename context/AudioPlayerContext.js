@@ -1,12 +1,14 @@
 import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
 import { Audio } from 'expo-av';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AppState } from 'react-native';
 
 const AudioPlayerContext = createContext();
 export const useAudioPlayer = () => useContext(AudioPlayerContext);
 
 export const AudioPlayerProvider = ({ children }) => {
   const sound = useRef(null);
+  const isLoading = useRef(false);
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(null);
   const [playlist, setPlaylist] = useState([]);
@@ -15,35 +17,19 @@ export const AudioPlayerProvider = ({ children }) => {
   const [isMiniPlayerVisible, setIsMiniPlayerVisible] = useState(false);
   const [position, setPosition] = useState(0);
   const [duration, setDuration] = useState(1);
-  const [trackPositions, setTrackPositions] = useState({});
   const [isRepeat, setIsRepeat] = useState(false);
   const [isShuffled, setIsShuffled] = useState(false);
 
+  // Handle app background state
   useEffect(() => {
-    const loadPositions = async () => {
-      const stored = await AsyncStorage.getItem('trackPositions');
-      if (stored) {
-        setTrackPositions(JSON.parse(stored));
+    const sub = AppState.addEventListener('change', async (state) => {
+      if (state === 'background' && sound.current) {
+        await sound.current.pauseAsync();
+        setIsPlaying(false);
       }
-    };
-    loadPositions();
+    });
+    return () => sub.remove();
   }, []);
-
-  useEffect(() => {
-    AsyncStorage.setItem('trackPositions', JSON.stringify(trackPositions));
-  }, [trackPositions]);
-
-  const saveTrackPosition = async () => {
-    if (sound.current && currentTrack?.title) {
-      const status = await sound.current.getStatusAsync();
-      if (status.isLoaded) {
-        setTrackPositions((prev) => ({
-          ...prev,
-          [currentTrack.title]: status.positionMillis,
-        }));
-      }
-    }
-  };
 
   const setupPlaybackStatus = () => {
     sound.current.setOnPlaybackStatusUpdate((status) => {
@@ -53,33 +39,32 @@ export const AudioPlayerProvider = ({ children }) => {
       setDuration(status.durationMillis || 1);
 
       if (status.didJustFinish) {
-        if (isRepeat) {
-          playAtIndex(currentIndex);
-        } else {
-          playNext();
-        }
+        isRepeat ? playAtIndex(currentIndex) : playNext();
       }
     });
   };
 
-  const loadAndPlayTrack = async (track, index = 0, list = []) => {
-    if (!track?.audio) {
-      console.warn('Track has no audio source:', track);
-      return;
+  const unloadCurrentSound = async () => {
+    if (sound.current) {
+      try {
+        await sound.current.unloadAsync();
+      } catch (e) {
+        console.warn('Unload error:', e);
+      }
+      sound.current.setOnPlaybackStatusUpdate(null);
+      sound.current = null;
     }
+  };
+
+  const loadAndPlayTrack = async (track, index = 0, list = []) => {
+    if (!track?.audio || isLoading.current) return;
+    isLoading.current = true;
 
     try {
-      if (sound.current) {
-        await sound.current.unloadAsync();
-        sound.current.setOnPlaybackStatusUpdate(null);
-        sound.current = null;
-      }
+      await unloadCurrentSound();
 
       const source = typeof track.audio === 'string' ? { uri: track.audio } : track.audio;
-
-      const { sound: newSound } = await Audio.Sound.createAsync(source, {
-        shouldPlay: true,
-      });
+      const { sound: newSound } = await Audio.Sound.createAsync(source, { shouldPlay: true });
 
       sound.current = newSound;
       setupPlaybackStatus();
@@ -90,29 +75,26 @@ export const AudioPlayerProvider = ({ children }) => {
       setIsPlaying(true);
       setIsMiniPlayerVisible(true);
     } catch (error) {
-      console.log('Error loading track:', error);
+      console.error('Playback error:', error);
+    } finally {
+      isLoading.current = false;
     }
   };
 
   const playAtIndex = (index) => {
-    const track = playlist[index];
-    if (track) {
-      loadAndPlayTrack(track, index, playlist);
+    if (playlist[index]) {
+      loadAndPlayTrack(playlist[index], index, playlist);
     }
   };
 
   const playNext = () => {
     const nextIndex = currentIndex + 1;
-    if (nextIndex < playlist.length) {
-      playAtIndex(nextIndex);
-    }
+    if (nextIndex < playlist.length) playAtIndex(nextIndex);
   };
 
   const playPrevious = () => {
     const prevIndex = currentIndex - 1;
-    if (prevIndex >= 0) {
-      playAtIndex(prevIndex);
-    }
+    if (prevIndex >= 0) playAtIndex(prevIndex);
   };
 
   const togglePlayPause = async () => {
@@ -129,9 +111,7 @@ export const AudioPlayerProvider = ({ children }) => {
     }
   };
 
-  const toggleRepeat = () => {
-    setIsRepeat((prev) => !prev);
-  };
+  const toggleRepeat = () => setIsRepeat((prev) => !prev);
 
   const toggleShuffle = () => {
     if (isShuffled) {
@@ -145,6 +125,15 @@ export const AudioPlayerProvider = ({ children }) => {
     }
   };
 
+  const playShuffledPlaylist = async (list) => {
+    if (!list || list.length === 0 || isLoading.current) return;
+
+    const shuffled = [...list].sort(() => Math.random() - 0.5);
+    await loadAndPlayTrack(shuffled[0], 0, shuffled);
+    setOriginalPlaylist(list); // Keep original
+    setIsShuffled(true);
+  };
+
   const seekTo = async (millis) => {
     if (sound.current) {
       await sound.current.setPositionAsync(millis);
@@ -152,12 +141,10 @@ export const AudioPlayerProvider = ({ children }) => {
     }
   };
 
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
-      saveTrackPosition();
-      if (sound.current) {
-        sound.current.unloadAsync();
-      }
+      if (sound.current) sound.current.unloadAsync();
     };
   }, []);
 
@@ -186,6 +173,7 @@ export const AudioPlayerProvider = ({ children }) => {
         toggleRepeat,
         isShuffled,
         toggleShuffle,
+        playShuffledPlaylist,
       }}
     >
       {children}

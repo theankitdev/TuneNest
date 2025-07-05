@@ -15,13 +15,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import Options from '../../components/options';
 import SectionList from '../../components/sectionList';
-import { router, useFocusEffect, usePathname } from 'expo-router';
-import { sections } from '../../components/Data';
+import { router,  } from 'expo-router';
 import { genre } from '../../assets/images/genres/genre';
 import CircularSection from '../../components/circularSectionList';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import music from '../../assets/music/sample.mp3';
 
 const Home = () => {
@@ -78,39 +75,41 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-  const fetchArtist = async () => {
-    try {
-      const response = await axios.get(
-        'https://api.jamendo.com/v3.0/artists/tracks/?client_id=3e2494c0&format=json&limit=10'
-      );
+        const fetchArtist = async () => {
+            try {
+                const response = await axios.get(
+                    'https://api.jamendo.com/v3.0/artists/tracks/?client_id=3e2494c0&format=json&limit=10'
+                );
 
-      const artists = response.data.results;
+                const artists = response.data.results;
 
-      const grouped = artists.map((artist) => {
-        const tracks = artist.tracks.map((track) => ({
-          title: track.name,
-          subtitle: artist.name,
-          artist: artist.name,
-          duration: Number(track.duration) * 1000,
-          image: { uri: track.album_image || artist.image },
-          audio: track.audio,
-        }));
+                const grouped = artists.map((artist) => {
+                    const artistName = artist.name;
+                    const artistImage = artist.image;
+                    const tracks = artist.tracks.map((track) => ({
+                        title: track.name,
+                        subtitle: artist.name,
+                        artist: artist.name,
+                        duration: Number(track.duration) * 1000,
+                        image: { uri: track.album_image || artist.image },
+                        audio: track.audio,
+                    }));
 
-        return {
-          artist: artist.name,
-          image: { uri: artist.image },
-          tracks, // array of this artist's tracks
+                    return {
+                        artist: artistName,
+                        image: artistImage,
+                        tracks, // array of this artist's tracks
+                    };
+                });
+
+                setArtist(grouped); // set as array of artist objects
+            } catch (error) {
+                console.error('Error fetching artists:', error.response?.data || error.message);
+            }
         };
-      });
 
-      setArtist(grouped); // set as array of artist objects
-    } catch (error) {
-      console.error('Error fetching artists:', error.response?.data || error.message);
-    }
-  };
-
-  fetchArtist();
-}, []);
+        fetchArtist();
+    }, []);
 
   const headerHeight = scrollY.interpolate({
     inputRange: [0, 100],

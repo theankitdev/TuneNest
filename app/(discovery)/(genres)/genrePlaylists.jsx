@@ -32,7 +32,7 @@ const GenrePlaylists = () => {
   });
 
   const tabOptions = [
-    { label: 'OVERVIEW', path: '/home' },
+    { label: 'OVERVIEW', path: '/genreSelected', params: { image } },
     { label: 'PLAYLISTS', path: '/genrePlaylists' },
     { label: 'NEW RELEASES', path: '/newReleases' },
     { label: 'ARTISTS', path: '/recommendation' },
@@ -75,11 +75,11 @@ const GenrePlaylists = () => {
           },
         })
       }
-      style={{ marginBottom: 20, width: '48%' }}
+      style={{ marginBottom: 20 }}
     >
       <Image
         source={item.image}
-        style={{ width: '171', height: 171, borderRadius: 10 }}
+        style={{ width: 151, height: 151, borderRadius: 10 }}
         resizeMode="cover"
       />
       <Text
@@ -88,8 +88,10 @@ const GenrePlaylists = () => {
           fontFamily: 'Lato-Regular',
           fontSize: 14,
           marginTop: 6,
+           width: 145
         }}
         numberOfLines={1}
+        ellipsizeMode="tail"
       >
         {item.title}
       </Text>
@@ -139,6 +141,7 @@ const GenrePlaylists = () => {
         </ImageBackground>
       </Animated.View>
 
+      <View className="flex-1 bg-[#1B1A1C]">
       {/* Animated Playlist List */}
       <Animated.FlatList
         data={playlist}
@@ -147,7 +150,8 @@ const GenrePlaylists = () => {
         numColumns={2}
         columnWrapperStyle={{
           justifyContent: 'space-between',
-          paddingHorizontal: 15,
+          marginHorizontal: 20,
+          gap: 20,
         }}
         contentContainerStyle={{
           paddingTop: 15,
@@ -162,6 +166,7 @@ const GenrePlaylists = () => {
         )}
         scrollEventThrottle={16}
       />
+      </View>
     </>
   );
 };

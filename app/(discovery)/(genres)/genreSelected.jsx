@@ -69,7 +69,7 @@ const GenreSelected = () => {
         fetchPlaylist();
     }, []);
 
-     useEffect(() => {
+    useEffect(() => {
         const fetchNewReleases = async () => {
             try {
                 const response = await axios.get('https://api.jamendo.com/v3.0/tracks/?client_id=3e2494c0&format=json&limit=10');
@@ -103,6 +103,8 @@ const GenreSelected = () => {
                 const artists = response.data.results;
 
                 const grouped = artists.map((artist) => {
+                    const artistName = artist.name;
+                    const artistImage = artist.image;
                     const tracks = artist.tracks.map((track) => ({
                         title: track.name,
                         subtitle: artist.name,
@@ -113,8 +115,8 @@ const GenreSelected = () => {
                     }));
 
                     return {
-                        artist: artist.name,
-                        image: { uri: artist.image },
+                        artist: artistName,
+                        image: artistImage,
                         tracks, // array of this artist's tracks
                     };
                 });
@@ -181,7 +183,7 @@ const GenreSelected = () => {
                     <SectionList
                         title='Playlists'
                         item={playlist}
-                        pathname='/playlistpage'
+                        pathname='/playlistPage'
                     />
                 )}
 
@@ -197,7 +199,7 @@ const GenreSelected = () => {
                     <CircularSection
                         title='Artists'
                         item={artist}
-                        pathname='/playlistPage'
+                        pathname='/artistPage'
                     />
                 )}
 
