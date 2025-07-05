@@ -35,7 +35,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.kumarankit783821.TuneNest"
+      "package": "com.kumarankit783821.TuneNest",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png",
