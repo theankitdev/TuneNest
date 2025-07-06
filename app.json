@@ -53,12 +53,12 @@
         }
       ],
       "@react-native-firebase/app",
-      "@react-native-firebase/auth",
+      "@react-native-firebase/auth"
     ],
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "1bd1d3fa-d3b3-4d65-bc71-e76a88eaf898"
+        "projectId": "b2d6edb0-7557-43e9-9f7d-304f2100f241"
       }
     }
   }
