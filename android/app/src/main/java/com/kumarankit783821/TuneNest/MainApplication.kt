@@ -1,4 +1,4 @@
-package com.kumarankit783821.TuneNest
+package com.kumarankit783821.tuneNest
 
 import android.app.Application
 import android.content.res.Configuration

@@ -16,7 +16,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.kumarankit783821.TuneNest",
+      "bundleIdentifier": "com.kumarankit783821.tuneNest",
       "infoPlist": {
         "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you.",
         "SKAdNetworkItems": [
@@ -35,8 +35,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.kumarankit783821.TuneNest",
-      "googleServicesFile": "./google-services.json"
+      "package": "com.kumarankit783821.tuneNest"
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -51,14 +50,12 @@
             "useFrameworks": "static"
           }
         }
-      ],
-      "@react-native-firebase/app",
-      "@react-native-firebase/auth"
+      ]
     ],
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "b2d6edb0-7557-43e9-9f7d-304f2100f241"
+        "projectId": "34db9ead-2b11-4d23-9a47-fea498e0801c"
       }
     }
   }
