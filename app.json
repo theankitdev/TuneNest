@@ -9,6 +9,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "deepLinking": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",

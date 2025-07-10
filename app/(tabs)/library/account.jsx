@@ -34,7 +34,7 @@ const AccountScreen = () => {
       description: 'Purchase Description',
       image: 'https://i.pravatar.cc/150?img=3', 
       currency: 'INR',
-      key: 'rzp_test_1234567890',
+      key: 'rzp_test_4Wlysk0uPT8zwa',
       amount: 99, 
       name: 'TuneNest',
       prefill: {
@@ -56,7 +56,6 @@ const AccountScreen = () => {
         Alert.alert('Payment Failed', `Error: ${error.code} | ${error.description}`); 
         console.error(`Payment failed: ${error.code} | ${error.description}`);
       });
-
   }
 
   return (
