@@ -101,7 +101,7 @@ export default function Layout() {
           }}
         />
         <Drawer.Screen
-          name="account"
+          name="(account)"
           options={{
             title: 'Account',
           }}

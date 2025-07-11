@@ -7,6 +7,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);     // User object or token
   const [loading, setLoading] = useState(true);
+   const [token, setToken] = useState(null);
 
   // Load user from AsyncStorage on app start
   useEffect(() => {
@@ -16,6 +17,7 @@ export const AuthProvider = ({ children }) => {
         const userData = await AsyncStorage.getItem('user');
 
         if (token && userData) {
+          setToken(token); 
           setUser(JSON.parse(userData)); // or store token if your API uses JWT
         }
       } catch (error) {
@@ -42,6 +44,7 @@ export const AuthProvider = ({ children }) => {
       await AsyncStorage.setItem('token', token);
       await AsyncStorage.setItem('user', JSON.stringify(user));
       setUser(user);
+      setToken(token);
     } catch (error) {
       console.error('Login failed:', error.response?.data || error.message);
       throw error;
@@ -52,10 +55,11 @@ export const AuthProvider = ({ children }) => {
     await AsyncStorage.removeItem('token');
     await AsyncStorage.removeItem('user');
     setUser(null);
+    setToken(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user,token, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import RazorpayCheckout from 'react-native-razorpay'
+import { router } from 'expo-router';
 
 const AccountScreen = () => {
   const [firstName, setfirstName] = useState('');
@@ -29,34 +30,34 @@ const AccountScreen = () => {
     }
   };
 
-  const handlePayment = () => {
-    const options = {
-      description: 'Purchase Description',
-      image: 'https://i.pravatar.cc/150?img=3', 
-      currency: 'INR',
-      key: 'rzp_test_4Wlysk0uPT8zwa',
-      amount: 99, 
-      name: 'TuneNest',
-      prefill: {
-        email: '',
-        contact: '',
-        name: 'John Doe',
-      },
-      theme: { color: '#2DCEEF' },
-    };
+  // const handlePayment = () => {
+  //   const options = {
+  //     description: 'Purchase Description',
+  //     image: 'https://i.pravatar.cc/150?img=3', 
+  //     currency: 'INR',
+  //     key: 'rzp_test_4Wlysk0uPT8zwa',
+  //     amount: 99, 
+  //     name: 'TuneNest',
+  //     prefill: {
+  //       email: '',
+  //       contact: '',
+  //       name: 'John Doe',
+  //     },
+  //     theme: { color: '#2DCEEF' },
+  //   };
 
-    RazorpayCheckout.open(options)
-      .then((data) => {
-        // handle success
-        Alert.alert('Payment Successful', `Payment ID: ${data.razorpay_payment_id}`);
-        console.log(`Payment successful: ${data.razorpay_payment_id}`);
-      })
-      .catch((error) => {
-        // handle failure
-        Alert.alert('Payment Failed', `Error: ${error.code} | ${error.description}`); 
-        console.error(`Payment failed: ${error.code} | ${error.description}`);
-      });
-  }
+  //   RazorpayCheckout.open(options)
+  //     .then((data) => {
+  //       // handle success
+  //       Alert.alert('Payment Successful', `Payment ID: ${data.razorpay_payment_id}`);
+  //       console.log(`Payment successful: ${data.razorpay_payment_id}`);
+  //     })
+  //     .catch((error) => {
+  //       // handle failure
+  //       Alert.alert('Payment Failed', `Error: ${error.code} | ${error.description}`); 
+  //       console.error(`Payment failed: ${error.code} | ${error.description}`);
+  //     });
+  // }
 
   return (
     <ScrollView className="flex-1 bg-[#161A1A] px-6 py-4" contentContainerStyle={{ paddingBottom: 150 }}>
@@ -81,7 +82,7 @@ const AccountScreen = () => {
           style={{ borderRadius: 25 }}
         >
           <TouchableOpacity className="w-full h-full justify-center items-center rounded-full"
-            onPress={handlePayment} 
+            onPress={() => router.push('/premiumPlanScreen')} 
           >
             <Text className="text-white font-LBold text-center text-[16px]">GO TO PREMIUM</Text>
           </TouchableOpacity>
