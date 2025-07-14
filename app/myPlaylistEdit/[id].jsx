@@ -8,12 +8,14 @@ import {
   TextInput,
   Alert,
   ActivityIndicator,
+  StatusBar,
+  SafeAreaView,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
-import { useAuth } from '../../context/authContext'; // adjust path as needed
+import { useAuth } from '../../context/authContext';
 
 const API_URL = 'https://tunenest-backend.onrender.com/api/v1/user-playlists';
 
@@ -119,101 +121,115 @@ export default function PlaylistEditScreen() {
   }
 
   return (
-    <ScrollView className="flex-1 bg-black px-4 pt-6">
-      <View className="items-center mb-4">
-        <TouchableOpacity onPress={pickCoverImage}>
-          {newCover || playlist.cover ? (
-            <Image
-              source={{ uri: newCover ? newCover.uri : playlist.cover }}
-              className="w-32 h-32 rounded-lg mb-2"
-            />
-          ) : (
-            <View className="w-32 h-32 rounded-lg mb-2 bg-gray-800 justify-center items-center">
-              <Ionicons name="musical-notes-outline" size={48} color="white" />
-            </View>
-          )}
+    <SafeAreaView className="flex-1 bg-black">
+      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+
+      {/* Header */}
+      <View className="flex-row items-center justify-between px-4 pt-8">
+        <TouchableOpacity onPress={() => router.back()}>
+          <Ionicons name="close" size={26} color="white" />
         </TouchableOpacity>
-        <Text className="text-gray-400 text-xs mb-2">Tap image to change cover</Text>
 
-        {!editingTitle ? (
-          <Text className="text-white text-2xl font-bold">{playlist.name}</Text>
-        ) : (
-          <TextInput
-            value={newTitle}
-            onChangeText={setNewTitle}
-            className="text-white text-xl font-bold border-b border-gray-500 w-full mb-2"
-          />
-        )}
-
-        <Text className="text-gray-400 mb-2">
-          {selectedIds.size} Song{selectedIds.size !== 1 ? 's' : ''}
-        </Text>
-
-        <View className="flex-row gap-3 mb-2">
-          <TouchableOpacity
-            onPress={() => setEditingTitle((prev) => !prev)}
-            className="border border-white rounded-full px-4 py-1"
-          >
-            <Text className="text-white text-sm">Edit Playlist Name</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => setEditingDesc((prev) => !prev)}
-            className="border border-white rounded-full px-4 py-1"
-          >
-            <Text className="text-white text-sm">Edit Description</Text>
-          </TouchableOpacity>
-        </View>
-
-        {editingDesc ? (
-          <TextInput
-            value={newDesc}
-            onChangeText={setNewDesc}
-            className="text-gray-300 border-b border-gray-500 w-full mb-2"
-            multiline
-            placeholder="Enter description"
-            placeholderTextColor="gray"
-          />
-        ) : (
-          <Text className="text-gray-400 text-center italic">
-            {playlist.description || 'No description'}
-          </Text>
-        )}
+        <TouchableOpacity onPress={saveEdits}>
+          <Text className="text-green-500 font-bold text-base">Save</Text>
+        </TouchableOpacity>
       </View>
 
-      <Text className="text-white text-lg mb-2 font-semibold">Playlist Songs</Text>
-
-      {loading ? (
-        <ActivityIndicator color="white" size="large" />
-      ) : (
-        songs.map((song) => (
-          <TouchableOpacity
-            key={song.id}
-            onPress={() => toggleSong(song.id)}
-            className="flex-row justify-between items-center mb-4"
-          >
-            <View className="flex-row items-center gap-3">
-              <Image source={{ uri: song.image }} className="w-10 h-10 rounded" />
-              <View>
-                <Text className="text-white font-semibold">{song.title}</Text>
-                <Text className="text-gray-400 text-xs">{song.artist}</Text>
+      {/* Playlist Info */}
+      <View className="px-4 pt-6">
+        <View className="items-center mb-4">
+          <TouchableOpacity onPress={pickCoverImage}>
+            {newCover || playlist.cover ? (
+              <Image
+                source={{ uri: newCover ? newCover.uri : playlist.cover }}
+                className="w-32 h-32 rounded-lg mb-2"
+              />
+            ) : (
+              <View className="w-32 h-32 rounded-lg mb-2 bg-gray-800 justify-center items-center">
+                <Ionicons name="musical-notes-outline" size={48} color="white" />
               </View>
-            </View>
-            <Ionicons
-              name={selectedIds.has(song.id) ? 'checkmark-circle' : 'ellipse-outline'}
-              size={22}
-              color={selectedIds.has(song.id) ? 'deepskyblue' : 'gray'}
-            />
+            )}
           </TouchableOpacity>
-        ))
-      )}
+          <Text className="text-gray-400 text-xs mb-2">Tap image to change cover</Text>
 
-      <TouchableOpacity
-        onPress={saveEdits}
-        className="mt-6 bg-green-500 py-3 rounded-full items-center"
-      >
-        <Text className="text-black font-semibold">Save Changes</Text>
-      </TouchableOpacity>
-    </ScrollView>
+          {!editingTitle ? (
+            <Text className="text-white text-2xl font-bold">{playlist.name}</Text>
+          ) : (
+            <TextInput
+              value={newTitle}
+              onChangeText={setNewTitle}
+              className="text-white text-xl font-bold border-b border-gray-500 w-full mb-2"
+            />
+          )}
+
+          <Text className="text-gray-400 mb-2">
+            {selectedIds.size} Song{selectedIds.size !== 1 ? 's' : ''}
+          </Text>
+
+          <View className="flex-row gap-3 mb-2">
+            <TouchableOpacity
+              onPress={() => setEditingTitle((prev) => !prev)}
+              className="border border-white rounded-full px-4 py-1"
+            >
+              <Text className="text-white text-sm">Edit Playlist Name</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setEditingDesc((prev) => !prev)}
+              className="border border-white rounded-full px-4 py-1"
+            >
+              <Text className="text-white text-sm">Edit Description</Text>
+            </TouchableOpacity>
+          </View>
+
+          {editingDesc ? (
+            <TextInput
+              value={newDesc}
+              onChangeText={setNewDesc}
+              className="text-gray-300 border-b border-gray-500 w-full mb-2"
+              multiline
+              placeholder="Enter description"
+              placeholderTextColor="gray"
+            />
+          ) : (
+            <Text className="text-gray-400 text-center italic">
+              {playlist.description || 'No description'}
+            </Text>
+          )}
+        </View>
+      </View>
+
+      {/* Recommended Songs - Scrollable */}
+      <View className="flex-1 px-4 pt-2">
+        <Text className="text-white text-lg mb-2 font-semibold">Recommended Songs</Text>
+
+        {loading ? (
+          <ActivityIndicator color="white" size="large" />
+        ) : (
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {songs.map((song) => (
+              <TouchableOpacity
+                key={song.id}
+                onPress={() => toggleSong(song.id)}
+                className="flex-row justify-between items-center mb-4"
+              >
+                <View className="flex-row items-center gap-3">
+                  <Image source={{ uri: song.image }} className="w-10 h-10 rounded" />
+                  <View>
+                    <Text className="text-white font-semibold">{song.title}</Text>
+                    <Text className="text-gray-400 text-xs">{song.artist}</Text>
+                  </View>
+                </View>
+                <Ionicons
+                  name={selectedIds.has(song.id) ? 'checkmark-circle' : 'ellipse-outline'}
+                  size={22}
+                  color={selectedIds.has(song.id) ? 'deepskyblue' : 'gray'}
+                />
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        )}
+      </View>
+    </SafeAreaView>
   );
 }
