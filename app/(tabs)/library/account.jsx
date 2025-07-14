@@ -6,6 +6,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import RazorpayCheckout from 'react-native-razorpay'
 import { router } from 'expo-router';
+import { useAuth } from '../../../context/authContext';
 
 const AccountScreen = () => {
   const [firstName, setfirstName] = useState('');
@@ -21,6 +22,8 @@ const AccountScreen = () => {
     { label: 'Female', value: 'Female' },
     { label: 'Other', value: 'Other' },
   ]);
+
+  const { logout } = useAuth();
 
   const handleDateChange = (event, selectedDate) => {
     setShowDatePicker(false);
@@ -82,7 +85,7 @@ const AccountScreen = () => {
           style={{ borderRadius: 25 }}
         >
           <TouchableOpacity className="w-full h-full justify-center items-center rounded-full"
-            onPress={() => router.push('/premiumPlanScreen')} 
+            onPress={() => router.push('/premiumPlanScreen')}
           >
             <Text className="text-white font-LBold text-center text-[16px]">GO TO PREMIUM</Text>
           </TouchableOpacity>
@@ -214,7 +217,21 @@ const AccountScreen = () => {
       </TouchableOpacity>
 
       <View className="flex-1 items-center justify-center mt-4">
-        <TouchableOpacity className="border border-white rounded-full h-[38px] items-center w-[173px] justify-center">
+        <TouchableOpacity className="border border-white rounded-full h-[38px] items-center w-[173px] justify-center"
+          onPress={() => {
+            Alert.alert('Logout', 'Are you sure you want to logout?', [
+              { text: 'Cancel', style: 'cancel' },
+              {
+                text: 'Logout',
+                style: 'destructive',
+                onPress: async() => {
+                  await logout();
+                  router.replace('/login');
+                },
+              },
+            ]);
+          }}
+        >
           <Text className="text-white font-LBold text-[16px]">LOG OUT</Text>
         </TouchableOpacity>
       </View>

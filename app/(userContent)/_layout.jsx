@@ -5,7 +5,6 @@ const _layout = () => {
     return (
         <Stack screenOptions={{ animation: 'none', gestureEnabled: false }}>
             <Stack.Screen name="myPlaylistEdit" options={{
-                headerBackVisible: false,
                 title: 'My Playlists',
                 headerTitleAlign: 'center',
                 headerTitleStyle: {
@@ -19,7 +18,6 @@ const _layout = () => {
                 },
             }} />
             <Stack.Screen name="favouriteSongs" options={{
-                headerBackVisible: false,
                 title: 'Favourite Songs',
                 headerTitleAlign: 'center',
                 headerTitleStyle: {
@@ -46,6 +44,21 @@ const _layout = () => {
                     borderBottomWidth: 1,
                 },
             }} />
+            <Stack.Screen name="myCreatedPlaylist" options={{
+                title: 'My Playlists',
+                headerTitleAlign: 'center',
+                headerTitleStyle: {
+                    color: 'white',
+                    fontFamily: 'Lato-Bold',
+                    fontSize: 18,
+                },
+                headerStyle: {
+                    backgroundColor: '#161A1A',
+                    borderBottomWidth: 1,
+                },
+            }} />
+            <Stack.Screen name='createPlaylist' options={{headerShown: false}}/>
+            <Stack.Screen name="edit" options={{headerShown: false }} />
         </Stack>
     )
 }

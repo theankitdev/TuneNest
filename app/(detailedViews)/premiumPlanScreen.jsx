@@ -12,7 +12,7 @@ import axios from 'axios';
 import RazorpayCheckout from 'react-native-razorpay';
 import { useAuth } from '../../context/authContext';
 
-const API_BASE_URL = 'http://192.168.1.37:5000/api/v1/subscription';
+const API_BASE_URL = 'https://tunenest-backend.onrender.com/api/v1/subscriptions';
 
 const PremiumPlansScreen = () => {
   const [plans, setPlans] = useState([]);
@@ -48,7 +48,7 @@ const PremiumPlansScreen = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      console.log('customer data is ',customerData)
+      console.log('customer data is ', customerData)
       const { customer } = customerData;
 
       // Create Razorpay subscription
@@ -66,7 +66,7 @@ const PremiumPlansScreen = () => {
 
       // Open Razorpay Checkout
       const options = {
-        key: process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID,
+        key: 'rzp_test_zQMYm9zY7ExlE2',
         name: 'TuneNest',
         description: `${plan.name} Subscription`,
         subscription_id: subscription.id,
@@ -87,12 +87,12 @@ const PremiumPlansScreen = () => {
           Alert.alert('Error', `Payment failed: ${err.description}`);
         });
     } catch (err) {
-      
-       console.error('❌ Subscription error:');
-  console.error('Message:', err.message);
-  console.error('Response Data:', err.response?.data);
-  console.error('Status Code:', err.response?.status);
-  Alert.alert('Error', 'Something went wrong while subscribing');
+
+      console.error('❌ Subscription error:');
+      console.error('Message:', err.message);
+      console.error('Response Data:', err.response?.data);
+      console.error('Status Code:', err.response?.status);
+      Alert.alert('Error', 'Something went wrong while subscribing');
       Alert.alert('Error', 'Something went wrong while subscribing');
     }
   };

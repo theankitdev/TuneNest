@@ -1,146 +1,117 @@
-import { View, Text, ImageBackground, Animated, Image, TouchableOpacity, FlatList, ScrollView } from 'react-native';
-import React, { useRef } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
-import { useLocalSearchParams } from 'expo-router';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { songs } from '../../components/Data';
-import { BlurView } from 'expo-blur';
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, Image, ScrollView, TouchableOpacity } from 'react-native';
+import axios from 'axios';
+import { router } from 'expo-router';
+import { useAuth } from '../../context/authContext';
 
-const MyCreatedPlaylist = () => {
-    const { title, image } = useLocalSearchParams();
-    const scrollY = useRef(new Animated.Value(0)).current;
+const API_URL = 'https://tunenest-backend.onrender.com/api/v1/user-playlists';
 
-    // Animate header height
-    const headerHeight = scrollY.interpolate({
-        inputRange: [0, 100],
-        outputRange: [340, 220], // Shrinks from 340 to 180
-        extrapolate: 'clamp',
-    });
+export default function MyPlaylistsScreen() {
+  const [playlists, setPlaylists] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
-    // Animate album image size
-    const albumSize = scrollY.interpolate({
-        inputRange: [0, 100],
-        outputRange: [174, 90],
-        extrapolate: 'clamp',
-    });
+  useEffect(() => {
+    if (user?._id) {
+      fetchUserPlaylists(user._id);
+    }
+  }, [user]);
 
-    // Animate likes size
-    const textSize = scrollY.interpolate({
-        inputRange: [0, 100],
-        outputRange: [14, 9],
-        extrapolate: 'clamp',
-    });
-    // Animate album title size
-    const albumNameSize = scrollY.interpolate({
-        inputRange: [0, 100],
-        outputRange: [30, 15],
-        extrapolate: 'clamp',
-    });
+  const fetchUserPlaylists = async (userId) => {
+    try {
+      const res = await axios.get(`${API_URL}?userId=${userId}`);
+      setPlaylists(res.data);
+    } catch (err) {
+      console.error('Failed to fetch playlists:', err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  const recentlyUpdated = playlists.slice(0, 5);
+
+  // 🔄 Loading state
+  if (loading) {
     return (
-        <>
-            <StatusBar style="light" />
-
-            {/* Animated Header */}
-            <Animated.View style={{ height: headerHeight, overflow: 'hidden' }}>
-                <ImageBackground
-                    source={image}
-                    style={{ flex: 1 }}
-                    resizeMode="cover"
-                    blurRadius={30}
-                >
-                    <SafeAreaView className="flex-1 justify-center items-center">
-                        <Animated.Image
-                            source={image}
-                            style={{
-                                width: albumSize,
-                                height: albumSize,
-                                borderRadius: 12,
-                                marginBottom: 12,
-                            }}
-                            resizeMode="contain"
-                        />
-                        <Animated.Text className="font-LBold text-white text-center"
-                            style={{
-                                fontSize: albumNameSize
-                            }}
-                        >
-                            {title}
-                        </Animated.Text>
-
-                        <View className="flex-row items-center justify-center mb-4 mt-2">
-                            <Ionicons name="heart" size={14} color="white" style={{ paddingHorizontal: 4 }} />
-                            <Animated.Text className="text-white text-[14px] font-LRegular"
-                                style={{
-                                    fontSize: textSize
-                                }}
-                            >
-                                87,444
-                            </Animated.Text>
-                        </View>
-                    </SafeAreaView>
-
-                    {/* Buttons */}
-                    <View className="flex-row items-center justify-around pb-4">
-                        <TouchableOpacity className="flex-row items-center">
-                            <Ionicons name="heart-outline" size={18} color="white" />
-                            <Text className="text-white text-[12px] font-LBold px-1">FOLLOW</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity className="flex-row items-center">
-                            <Ionicons name="play" size={18} color="white" />
-                            <Text className="text-white text-[12px] font-LBold px-1">PLAY</Text>
-                        </TouchableOpacity>
-                    </View>
-                </ImageBackground>
-            </Animated.View>
-
-            <View className="flex-row justify-center items-center py-6  w-full bg-[#491EB8]">
-                <TouchableOpacity>
-                    <Text className="text-white text-[16px] font-LRegular text-center mx-4">OVERVIEW</Text>
-                </TouchableOpacity>
-                <TouchableOpacity>
-                    <Text className="text-white text-[16px] font-LRegular mx-4">About</Text>
-                </TouchableOpacity>
-                <TouchableOpacity>
-                    <Text className="text-white text-[16px] font-LRegular mx-4">FANS ALSO LIKE</Text>
-                </TouchableOpacity>
-            </View>
-
-            {/* Song List */}
-            <Animated.FlatList
-                data={songs}
-                keyExtractor={(item) => item.id}
-                onScroll={Animated.event(
-                    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                    { useNativeDriver: false }
-                )}
-                contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 10, paddingBottom: 5, backgroundColor: '#491EB8' }}
-
-                ListHeaderComponent={
-                    /* Featuring Line */
-                    <Text className="text-[#99999F] text-[14px] font-LRegular px-7 pt-4 mb-4" >
-                        Playists
-                    </Text>
-                }
-                renderItem={({ item }) => (
-                    <TouchableOpacity className="flex-row items-center gap-3 pt-6">
-                        <Image
-                            source={item.image}
-                            className="w-[45px] h-[45px] rounded-md"
-                            resizeMode="cover"
-                        />
-                        <View className="pl-1">
-                            <Text className="text-[14px] text-white font-LRegular mb-1">{item.title}</Text>
-                            <Text className="text-[13px] text-[#99999F] font-LRegular">
-                                {item.artist} / {item.duration}
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
-                )}
-            />
-        </>
+      <View className="flex-1 items-center justify-center bg-black">
+        <Text className="text-white font-LRegular">Loading playlists...</Text>
+      </View>
     );
-};
+  }
 
-export default MyCreatedPlaylist;
+  // 🟡 No playlists: Show centered empty state
+  if (playlists.length === 0) {
+    return (
+      <View className="flex-1 items-center justify-center bg-black px-4">
+        <Text className="text-gray-400 text-[16px] font-LRegular mb-4 text-center">
+          You have not created any playlist yet.
+        </Text>
+        <TouchableOpacity
+          onPress={() => router.push('/createPlaylist')}
+          className="bg-green-500 px-6 py-4 rounded-full"
+        >
+          <Text className="text-black font-LBold text-[16px]">Create Playlist</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  // ✅ Playlists exist: show scrollable content
+  return (
+    <ScrollView className="flex-1 bg-black px-4 py-6" contentContainer>
+      {/* Recently Updated */}
+      <Text className="text-white font-LRegular text-base mb-2">Recently updated</Text>
+      <FlatList
+        horizontal
+        data={[{ isCreateCard: true }, ...recentlyUpdated]}
+        keyExtractor={(item, index) => item._id || `create-${index}`}
+        showsHorizontalScrollIndicator={false}
+        className="mb-6"
+        renderItem={({ item }) => {
+          if (item.isCreateCard) {
+            return (
+              <TouchableOpacity
+                onPress={() => router.push('/createPlaylist')}
+                className="mr-4 items-center justify-center"
+              >
+                <View className="w-24 h-24 rounded-lg bg-neutral-800 items-center justify-center">
+                  <Text className="text-white text-4xl">+</Text>
+                </View>
+                <Text className="text-white text-xs text-center mt-1 w-24">
+                  Create Playlist
+                </Text>
+              </TouchableOpacity>
+            );
+          }
+
+          return (
+            <View className="mr-4 items-center">
+              <Image
+                source={{ uri: item.cover || 'https://via.placeholder.com/100' }}
+                className="w-24 h-24 rounded-lg mb-1"
+              />
+              <Text className="text-white text-xs text-center w-24" numberOfLines={1}>
+                {item.name}
+              </Text>
+            </View>
+          );
+        }}
+      />
+
+      {/* My Playlists Section */}
+      <Text className="text-white font-LRegular text-base mb-3">My playlists</Text>
+      {playlists.map((item) => (
+        <View key={item._id} className="flex-row items-center mb-4">
+          <Image
+            source={{ uri: item.cover || 'https://via.placeholder.com/50' }}
+            className="w-10 h-10 rounded mr-4"
+          />
+          <View>
+            <Text className="text-white font-semibold">{item.name}</Text>
+            <Text className="text-gray-400 text-xs">{item.songs?.length || 0} songs</Text>
+          </View>
+        </View>
+      ))}
+    </ScrollView>
+  );
+}
