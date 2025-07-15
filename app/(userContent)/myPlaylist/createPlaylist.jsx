@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import axios from 'axios';
-import { useAuth } from '../../context/authContext';
+import { useAuth } from '../../../context/authContext';
 import { router } from 'expo-router';
 
 const API_URL = 'https://tunenest-backend.onrender.com/api/v1/user-playlists';
@@ -46,9 +46,10 @@ export default function CreatePlaylistScreen() {
 
       // Navigate to edit screen and pass playlist id
       router.replace({
-        pathname: '/myPlaylistEdit/[id]',
-        params: { id: newPlaylist._id },
+        pathname: '/myPlaylist/[playlistId]/edit',
+        params: { playlistId: newPlaylist._id },
       });
+
     } catch (err) {
       console.error('Failed to create playlist:', err.message);
     } finally {

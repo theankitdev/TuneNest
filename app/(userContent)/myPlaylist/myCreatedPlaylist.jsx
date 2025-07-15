@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Image, ScrollView, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import { router } from 'expo-router';
-import { useAuth } from '../../context/authContext';
+import { useAuth } from '../../../context/authContext';
 
 const API_URL = 'https://tunenest-backend.onrender.com/api/v1/user-playlists';
 
@@ -30,19 +30,17 @@ export default function MyPlaylistsScreen() {
 
   const recentlyUpdated = playlists.slice(0, 5);
 
-  // 🔄 Loading state
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-black">
+      <View className="flex-1 items-center justify-center bg-[#161A1A]">
         <Text className="text-white font-LRegular">Loading playlists...</Text>
       </View>
     );
   }
 
-  // 🟡 No playlists: Show centered empty state
   if (playlists.length === 0) {
     return (
-      <View className="flex-1 items-center justify-center bg-black px-4">
+      <View className="flex-1 items-center justify-center bg-[#161A1A] px-4">
         <Text className="text-gray-400 text-[16px] font-LRegular mb-4 text-center">
           You have not created any playlist yet.
         </Text>
@@ -56,28 +54,28 @@ export default function MyPlaylistsScreen() {
     );
   }
 
-  // ✅ Playlists exist: show scrollable content
   return (
-    <ScrollView className="flex-1 bg-black px-4 py-6" contentContainer>
+    <ScrollView className="flex-1 bg-[#161A1A] px-4 py-6" contentContainer>
       {/* Recently Updated */}
-      <Text className="text-white font-LRegular text-base mb-2">Recently updated</Text>
+      <Text className="text-white font-LRegular text-[18px] mb-6">Recently updated</Text>
       <FlatList
         horizontal
         data={[{ isCreateCard: true }, ...recentlyUpdated]}
         keyExtractor={(item, index) => item._id || `create-${index}`}
         showsHorizontalScrollIndicator={false}
         className="mb-6"
+        contentContainerStyle={{ paddingBottom: 16 }}
         renderItem={({ item }) => {
           if (item.isCreateCard) {
             return (
               <TouchableOpacity
-                onPress={() => router.push('/createPlaylist')}
+                onPress={() => router.push('/myPlaylist/createPlaylist')}
                 className="mr-4 items-center justify-center"
               >
-                <View className="w-24 h-24 rounded-lg bg-neutral-800 items-center justify-center">
-                  <Text className="text-white text-4xl">+</Text>
+                <View className="w-32 h-32 rounded-lg bg-neutral-800 items-center justify-center">
+                  <Text className="text-white text-6xl">+</Text>
                 </View>
-                <Text className="text-white text-xs text-center mt-1 w-24">
+                <Text className="text-white text-[14px] font-LRegular text-center mt-2 w-32">
                   Create Playlist
                 </Text>
               </TouchableOpacity>
@@ -85,32 +83,39 @@ export default function MyPlaylistsScreen() {
           }
 
           return (
-            <View className="mr-4 items-center">
+            <TouchableOpacity
+              onPress={() => router.push(`/myPlaylist/${item._id}`)}  // ✅ Navigate to detail
+              className="mr-4 items-center"
+            >
               <Image
                 source={{ uri: item.cover || 'https://via.placeholder.com/100' }}
-                className="w-24 h-24 rounded-lg mb-1"
+                className="w-32 h-32 rounded-lg mb-1"
               />
-              <Text className="text-white text-xs text-center w-24" numberOfLines={1}>
+              <Text className="text-white text-[15px] font-LRegular text-center w-32 mt-2" numberOfLines={1}>
                 {item.name}
               </Text>
-            </View>
+            </TouchableOpacity>
           );
         }}
       />
 
       {/* My Playlists Section */}
-      <Text className="text-white font-LRegular text-base mb-3">My playlists</Text>
+      <Text className="text-white font-LRegular text-[18px] mb-10">My playlists</Text>
       {playlists.map((item) => (
-        <View key={item._id} className="flex-row items-center mb-4">
+        <TouchableOpacity
+          key={item._id}
+          onPress={() => router.push(`/myPlaylist/${item._id}`)}  // ✅ Open detail page
+          className="flex-row items-center mb-4"
+        >
           <Image
             source={{ uri: item.cover || 'https://via.placeholder.com/50' }}
             className="w-10 h-10 rounded mr-4"
           />
           <View>
-            <Text className="text-white font-semibold">{item.name}</Text>
-            <Text className="text-gray-400 text-xs">{item.songs?.length || 0} songs</Text>
+            <Text className="text-white font-LRegular mb-2">{item.name}</Text>
+            <Text className="text-gray-400 font-LRegular text-[13px]">{item.songs?.length || 0} songs</Text>
           </View>
-        </View>
+        </TouchableOpacity>
       ))}
     </ScrollView>
   );

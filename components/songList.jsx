@@ -27,7 +27,7 @@ const SongList = ({ songs }) => {
           }}
         >
           <Image
-            source={track.image}
+            source={{uri: track.image}}
             className="w-[full] h-[45px] rounded-md"
             style={{ width: 45, height: 45 }}
             resizeMode="cover"

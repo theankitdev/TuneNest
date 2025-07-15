@@ -18,7 +18,7 @@ const Library = () => {
       <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 80 }}>
         <TouchableOpacity
           className="flex-row items-center space-x-3 mb-6"
-          onPress={() => router.push('/myCreatedPlaylist')}
+          onPress={() => router.push('/myPlaylist/myCreatedPlaylist')}
         >
           <Image source={playlist} style={{ width: 20, height: 20, marginRight:12}} />
           <Text className="text-white text-[18px] font-LRegular">Playlists</Text>

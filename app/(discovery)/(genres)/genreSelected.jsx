@@ -55,7 +55,7 @@ const GenreSelected = () => {
                     title: track.name,
                     artist: track.artist_name, // used in queue
                     duration: track.duration * 1000, // Jamendo gives in seconds; convert to ms
-                    image: { uri: track.album_image },
+                    image: track.album_image ,
                     audio: track.audio || music,
                 }));
 
@@ -78,7 +78,7 @@ const GenreSelected = () => {
                     title: track.name,
                     subtitle: track.artist_name, // used in section display
                     duration: track.duration * 1000, // Jamendo gives in seconds; convert to ms
-                    image: { uri: track.album_image },
+                    image: track.album_image ,
                     audio: track.audio || music,
                     releaseDate: track.releasedate, // assuming this field exists
                 }));
@@ -110,7 +110,7 @@ const GenreSelected = () => {
                         subtitle: artist.name,
                         artist: artist.name,
                         duration: Number(track.duration) * 1000,
-                        image: { uri: track.album_image || artist.image },
+                        image: track.album_image || artist.image ,
                         audio: track.audio,
                     }));
 

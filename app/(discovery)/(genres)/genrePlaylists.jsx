@@ -50,7 +50,7 @@ const GenrePlaylists = () => {
           artist: track.artist_name,
           subtitle: track.artist_name,
           duration: track.duration * 1000,
-          image: { uri: track.album_image },
+          image: track.album_image ,
           audio: track.audio,
           likes: '12.5K', // Optional default likes
         }));
@@ -78,7 +78,7 @@ const GenrePlaylists = () => {
       style={{ marginBottom: 20 }}
     >
       <Image
-        source={item.image}
+        source={{uri:item.image}}
         style={{ width: 151, height: 151, borderRadius: 10 }}
         resizeMode="cover"
       />

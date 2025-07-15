@@ -15,12 +15,12 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
-import { useAuth } from '../../context/authContext';
+import { useAuth } from '../../../../context/authContext';
 
 const API_URL = 'https://tunenest-backend.onrender.com/api/v1/user-playlists';
 
 export default function PlaylistEditScreen() {
-  const { id } = useLocalSearchParams();
+  const { playlistId } = useLocalSearchParams();
   const { user } = useAuth();
   const router = useRouter();
 
@@ -41,7 +41,7 @@ export default function PlaylistEditScreen() {
 
   const fetchPlaylist = async () => {
     try {
-      const res = await axios.get(`${API_URL}/${id}`);
+      const res = await axios.get(`${API_URL}/${playlistId}`);
       setPlaylist(res.data);
       setNewTitle(res.data.name);
       setNewDesc(res.data.description || '');
@@ -127,11 +127,11 @@ export default function PlaylistEditScreen() {
       {/* Header */}
       <View className="flex-row items-center justify-between px-4 pt-8">
         <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="close" size={26} color="white" />
+          <Ionicons name="close" size={30} color="white" />
         </TouchableOpacity>
 
         <TouchableOpacity onPress={saveEdits}>
-          <Text className="text-green-500 font-bold text-base">Save</Text>
+          <Text className="text-green-500 font-LBold text-[18px]">Save</Text>
         </TouchableOpacity>
       </View>
 
@@ -150,35 +150,35 @@ export default function PlaylistEditScreen() {
               </View>
             )}
           </TouchableOpacity>
-          <Text className="text-gray-400 text-xs mb-2">Tap image to change cover</Text>
+          <Text className="text-gray-400 text-xs font-LRegular mb-2">Tap image to change cover</Text>
 
           {!editingTitle ? (
-            <Text className="text-white text-2xl font-bold">{playlist.name}</Text>
+            <Text className="text-white text-2xl font-LBold">{playlist.name}</Text>
           ) : (
             <TextInput
               value={newTitle}
               onChangeText={setNewTitle}
-              className="text-white text-xl font-bold border-b border-gray-500 w-full mb-2"
+              className="text-white text-xl text-center font-LBold border-b border-gray-500 px-4 mb-2"
             />
           )}
 
-          <Text className="text-gray-400 mb-2">
+          <Text className="text-gray-400 font-LRegular mb-2">
             {selectedIds.size} Song{selectedIds.size !== 1 ? 's' : ''}
           </Text>
 
-          <View className="flex-row gap-3 mb-2">
+          <View className="flex-row gap-8 my-4">
             <TouchableOpacity
               onPress={() => setEditingTitle((prev) => !prev)}
               className="border border-white rounded-full px-4 py-1"
             >
-              <Text className="text-white text-sm">Edit Playlist Name</Text>
+              <Text className="text-white text-sm font-LRegular py-1">Edit Playlist Name</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => setEditingDesc((prev) => !prev)}
               className="border border-white rounded-full px-4 py-1"
             >
-              <Text className="text-white text-sm">Edit Description</Text>
+              <Text className="text-white text-sm font-LRegular py-1">Edit Description</Text>
             </TouchableOpacity>
           </View>
 
@@ -186,13 +186,13 @@ export default function PlaylistEditScreen() {
             <TextInput
               value={newDesc}
               onChangeText={setNewDesc}
-              className="text-gray-300 border-b border-gray-500 w-full mb-2"
+              className="text-gray-300 border-b border-gray-500 w-full mb-2 font-LRegular text-center"
               multiline
               placeholder="Enter description"
               placeholderTextColor="gray"
             />
           ) : (
-            <Text className="text-gray-400 text-center italic">
+            <Text className="text-gray-400 text-center font-LItalic">
               {playlist.description || 'No description'}
             </Text>
           )}
@@ -201,7 +201,7 @@ export default function PlaylistEditScreen() {
 
       {/* Recommended Songs - Scrollable */}
       <View className="flex-1 px-4 pt-2">
-        <Text className="text-white text-lg mb-2 font-semibold">Recommended Songs</Text>
+        <Text className="text-white text-lg mb-6 font-LBold">Recommended Songs</Text>
 
         {loading ? (
           <ActivityIndicator color="white" size="large" />
@@ -214,10 +214,10 @@ export default function PlaylistEditScreen() {
                 className="flex-row justify-between items-center mb-4"
               >
                 <View className="flex-row items-center gap-3">
-                  <Image source={{ uri: song.image }} className="w-10 h-10 rounded" />
+                  <Image source={{ uri: song.image }} className="w-12 h-12 rounded" />
                   <View>
-                    <Text className="text-white font-semibold">{song.title}</Text>
-                    <Text className="text-gray-400 text-xs">{song.artist}</Text>
+                    <Text className="text-white font-LRegular text-[14px]">{song.title}</Text>
+                    <Text className="text-gray-400 text-[12px] font-LRegular mt-1">{song.artist} / {song.duration}</Text>
                   </View>
                 </View>
                 <Ionicons

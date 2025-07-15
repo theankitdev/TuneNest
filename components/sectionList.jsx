@@ -37,7 +37,7 @@ const SectionList = ({ title, item, subtitle, pathname = "/playlist" }) => {
         renderItem={({ item: track }) => (
           <TouchableOpacity onPress={handleNavigate}>
             <Image
-              source={track.image}
+              source={{ uri: track.image}}
               className="w-full h-[100px] rounded-lg mb-2 mt-1"
               style={{ width: 145, height: 145 }}
               resizeMode="cover"

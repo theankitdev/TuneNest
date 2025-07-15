@@ -1,5 +1,8 @@
-import album from "../assets/images/album.jpg";
+import albumimg from "../assets/images/album.jpg";
 import sampleAudio from "../assets/music/sample.mp3";
+import { Image } from "react-native";
+
+const album = Image.resolveAssetSource(albumimg).uri;
 
 export const sections = [
   {

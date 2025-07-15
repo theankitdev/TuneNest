@@ -64,7 +64,7 @@ const ArtistPage = () => {
           artist: track.artist_name,
           subtitle: track.artist_name,
           duration: track.duration * 1000,
-          image: { uri: track.album_image },
+          image: track.album_image,
           audio: track.audio,
           releaseDate: track.releasedate,
         }));
@@ -91,7 +91,7 @@ const ArtistPage = () => {
             subtitle: artist.name,
             artist: artist.name,
             duration: Number(track.duration) * 1000,
-            image: { uri: track.album_image || artist.image },
+            image: track.album_image || artist.image,
             audio: track.audio,
           }));
           return {

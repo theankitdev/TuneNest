@@ -52,7 +52,7 @@ const MiniPlayer = () => {
         style={styles.container}
       >
         <View style={styles.left}>
-          <Image source={currentTrack.image} style={styles.image} />
+          <Image source={{uri: currentTrack.image}} style={styles.image} />
           <Text style={styles.title} numberOfLines={1}>
             {currentTrack.title}
           </Text>

@@ -58,7 +58,7 @@ const PlaylistPage = () => {
         >
           <SafeAreaView className="flex-1 justify-center items-center">
             <Animated.Image
-              source={item[0]?.image}
+              source={{ uri:item[0]?.image}}
               style={{
                 width: albumSize,
                 height: albumSize,
@@ -128,7 +128,7 @@ const PlaylistPage = () => {
             }}
           >
             <Image
-              source={track.image}
+              source={{uri: track.image}}
               className="w-[45px] h-[45px] rounded-md"
               resizeMode="cover"
             />

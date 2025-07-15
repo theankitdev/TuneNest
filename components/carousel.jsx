@@ -48,7 +48,7 @@ const SongCarousel = ({ playlist, currentIndex, playAtIndex }) => {
             activeOpacity={0.8}
           >
             <Image
-              source={item.image}
+              source={{uri:item.image}}
               style={{ width: 330, height: 330, borderRadius: 20 }}
               resizeMode="cover"
             />
