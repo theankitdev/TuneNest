@@ -1,0 +1,15 @@
+import { View, Text } from 'react-native'
+import React from 'react'
+import { Stack } from 'expo-router';
+
+const _layout = () => {
+  return (
+    <Stack>
+        <Stack.Screen name='myAlbums'/>
+        <Stack.Screen name='createAlbum'/>
+        <Stack.Screen name='[albumId]'/>
+    </Stack>
+  )
+}
+
+export default _layout

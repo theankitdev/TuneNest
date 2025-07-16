@@ -26,13 +26,6 @@ export default function PlaylistDetailScreen() {
     setPlaylistData(data);
   };
 
-  const formatDuration = (seconds) => {
-  if (!seconds || isNaN(seconds)) return '0:00';
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-};
-
   if (!playlistData) {
     return (
       <View className="flex-1 bg-black items-center justify-center">
@@ -81,7 +74,7 @@ export default function PlaylistDetailScreen() {
           <Image source={{ uri: song.image }} className="w-12 h-12 rounded mr-4" />
           <View>
             <Text className="text-white text-[15px] font-LRegular">{song.title}</Text>
-            <Text className="text-gray-400 text-[12px] font-LRegular">{song.artist} / {formatDuration(song.duration)}</Text>
+            <Text className="text-gray-400 text-[12px] font-LRegular">{song.artist} / {song.duration}</Text>
           </View>
         </TouchableOpacity>
       ))}

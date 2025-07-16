@@ -81,7 +81,7 @@ const Home = () => {
           title: track.name,
           subtitle: artist.name,
           artist: artist.name,
-          duration: Number(track.duration) * 1000,
+          duration: track.duration,
           image: track.album_image || artist.image,
           audio: track.audio || music,
         })),
@@ -89,7 +89,7 @@ const Home = () => {
 
       // 3️⃣ Combine both
       setPlaylist([...customPlaylists, ...jamendoPlaylists]);
-      console.log("Custom Playlist Sample Song:", customPlaylists[0]?.tracks?.[0]);
+      console.log("Custom Playlist Sample Song:", customPlaylists[1]?.tracks?.[0]);
 
     } catch (error) {
       console.error('Playlist fetch error:', error.message);
@@ -128,7 +128,7 @@ const Home = () => {
           title: track.name,
           subtitle: artist.name,
           artist: artist.name,
-          duration: Number(track.duration) * 1000,
+          duration: track.duration,
           image: track.album_image || artist.image,
           audio: track.audio,
         })),
@@ -193,7 +193,7 @@ const Home = () => {
 
       {/* Main Content */}
       <Animated.ScrollView
-        contentContainerStyle={{ paddingBottom: 130, paddingHorizontal: 15, flexGrow: 1 }}
+        contentContainerStyle={{ paddingBottom: 130, paddingLeft: 15, flexGrow: 1 }}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: false }

@@ -38,13 +38,12 @@ const ExpandableQueue = ({ currentTrack }) => {
   const [originalPlaylist, setOriginalPlaylist] = useState(songs);
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
 
-  const formatTime = (millis) => {
-    if (!millis) return "0:00";
-    const totalSeconds = Math.floor(millis / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-  };
+  const formatTime = (seconds) => {
+  if (!seconds || isNaN(seconds)) return '0:00';
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+};
 
   const expandQueue = () => {
     setExpanded(true);
@@ -253,13 +252,19 @@ const Player = () => {
   };
 
   const onPlaybackStatusUpdate = (status) => {
-    if (!status.isLoaded || !isMounted.current) return;
-    setDuration(status.durationMillis || 1);
-    if (!isSeeking) {
-      setPosition(status.positionMillis);
-      setDisplayPosition(status.positionMillis);
-    }
-  };
+  if (!status.isLoaded || !isMounted.current) return;
+
+  setDuration(status.durationMillis || 1);
+
+  if (!isSeeking) {
+    setPosition(status.positionMillis);
+    setDisplayPosition(status.positionMillis);
+  }
+
+  if (status.didJustFinish && !status.isLooping) {
+    playNext();
+  }
+};
 
   useEffect(() => {
     const init = async () => {
@@ -310,7 +315,7 @@ const Player = () => {
     <>
       <StatusBar style="light" />
       <ImageBackground
-        source={currentTrack.image}
+        source={{uri:currentTrack.image}}
         className="items-center"
         style={{ width: "100%", height: "100%" }}
         resizeMode="cover"

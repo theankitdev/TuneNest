@@ -47,12 +47,12 @@ const PlaylistPage = () => {
     extrapolate: 'clamp',
   });
 
-  const formatDuration = (ms) => {
-    if (!ms || isNaN(ms)) return '0:00';
-    const minutes = Math.floor(ms / 60000);
-    const seconds = Math.floor((ms % 60000) / 1000);
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  };
+  const formatDuration = (seconds) => {
+  if (!seconds || isNaN(seconds)) return '0:00';
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+};
 
   return (
     <>

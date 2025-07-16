@@ -3,6 +3,8 @@ import { View, Text, FlatList, Image, ScrollView, TouchableOpacity } from 'react
 import axios from 'axios';
 import { router } from 'expo-router';
 import { useAuth } from '../../../context/authContext';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 const API_URL = 'https://tunenest-backend.onrender.com/api/v1/user-playlists';
 
@@ -16,6 +18,14 @@ export default function MyPlaylistsScreen() {
       fetchUserPlaylists(user._id);
     }
   }, [user]);
+
+  useFocusEffect(
+  useCallback(() => {
+    if (user?._id) {
+      fetchUserPlaylists(user._id);
+    }
+  }, [user])
+);
 
   const fetchUserPlaylists = async (userId) => {
     try {
@@ -45,7 +55,7 @@ export default function MyPlaylistsScreen() {
           You have not created any playlist yet.
         </Text>
         <TouchableOpacity
-          onPress={() => router.push('/createPlaylist')}
+          onPress={() => router.push('/myPlaylist/createPlaylist')}
           className="bg-green-500 px-6 py-4 rounded-full"
         >
           <Text className="text-black font-LBold text-[16px]">Create Playlist</Text>
@@ -55,7 +65,7 @@ export default function MyPlaylistsScreen() {
   }
 
   return (
-    <ScrollView className="flex-1 bg-[#161A1A] px-4 py-6" contentContainer>
+    <ScrollView className="flex-1 bg-[#161A1A] px-4 py-6" contentContainerStyle={{ paddingBottom: 30 }}>
       {/* Recently Updated */}
       <Text className="text-white font-LRegular text-[18px] mb-6">Recently updated</Text>
       <FlatList

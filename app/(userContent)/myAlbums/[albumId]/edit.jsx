@@ -39,7 +39,6 @@ export default function PlaylistEditScreen() {
     fetchSongs();
   }, []);
 
-
   const fetchPlaylist = async () => {
     try {
       const res = await axios.get(`${API_URL}/${playlistId}`);
@@ -96,12 +95,12 @@ export default function PlaylistEditScreen() {
         });
       }
 
-      await axios.put(`${API_URL}/${playlistId}`, formData, {
+      await axios.put(`${API_URL}/${id}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       const selectedSongs = songs.filter((s) => selectedIds.has(s.id));
-      await axios.put(`${API_URL}/${playlistId}/songs`, {
+      await axios.put(`${API_URL}/${id}/songs`, {
         userId: user._id,
         songs: selectedSongs,
       });
@@ -112,13 +111,6 @@ export default function PlaylistEditScreen() {
       Alert.alert('Error', 'Failed to update playlist');
     }
   };
-
-  const formatDuration = (seconds) => {
-  if (!seconds || isNaN(seconds)) return '0:00';
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-};
 
   if (!playlist) {
     return (
@@ -225,7 +217,7 @@ export default function PlaylistEditScreen() {
                   <Image source={{ uri: song.image }} className="w-12 h-12 rounded" />
                   <View>
                     <Text className="text-white font-LRegular text-[14px]">{song.title}</Text>
-                    <Text className="text-gray-400 text-[12px] font-LRegular mt-1">{song.artist} / {formatDuration(song.duration)}</Text>
+                    <Text className="text-gray-400 text-[12px] font-LRegular mt-1">{song.artist} / {song.duration}</Text>
                   </View>
                 </View>
                 <Ionicons

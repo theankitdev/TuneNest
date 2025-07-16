@@ -23,7 +23,7 @@ const AccountScreen = () => {
     { label: 'Other', value: 'Other' },
   ]);
 
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   const handleDateChange = (event, selectedDate) => {
     setShowDatePicker(false);
@@ -62,11 +62,19 @@ const AccountScreen = () => {
   //     });
   // }
 
+  const formatDOB = (dobString) => {
+  const date = new Date(dobString);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // months are 0-indexed
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+};
+
   return (
     <ScrollView className="flex-1 bg-[#161A1A] px-6 py-4" contentContainerStyle={{ paddingBottom: 150 }}>
       {/* Avatar Section */}
       <View className="items-center mb-6">
-        <Text className="text-white mt-4 text-[16px] font-LBold mb-4">John Doe</Text>
+        <Text className="text-white mt-4 text-[16px] font-LBold mb-4">{user?.firstName} {user?.lastName}</Text>
         <TouchableOpacity className="relative">
           <Image
             source={{ uri: 'https://i.pravatar.cc/150?img=3' }} // replace with user.avatar
@@ -100,7 +108,7 @@ const AccountScreen = () => {
         <Text className="text-white text-[12px] font-LRegular ">First Name</Text>
         <TextInput
           className="text-white border-b border-[#949494] justify-center text-[16px] font-LRegular"
-          value={firstName}
+          value={user?.firstName }
           onChangeText={setfirstName}
         />
       </View>
@@ -109,7 +117,7 @@ const AccountScreen = () => {
         <Text className="text-white text-[12px] font-LRegular ">Last Name</Text>
         <TextInput
           className="text-white border-b border-[#949494] justify-center  text-[16px] font-LRegular"
-          value={lastName}
+          value={user?.lastName}
           onChangeText={setLastName}
         />
       </View>
@@ -120,11 +128,11 @@ const AccountScreen = () => {
         <View className="border-b border-[#949494] h-[36px] justify-center">
           <DropDownPicker
             open={open}
-            value={value}
+            value={user?.gender}
             items={items}
-            setOpen={setOpen}
-            setValue={setValue}
-            setItems={setItems}
+            // setOpen={setOpen}
+            // setValue={setValue}
+            // setItems={setItems}
             placeholder=""
             style={{
               backgroundColor: 'transparent',
@@ -163,7 +171,7 @@ const AccountScreen = () => {
           onPress={() => setShowDatePicker(true)}
           className="border-b border-[#949494] justify-center h-[36px]"
         >
-          <Text className="text-[16px] font-LRegular text-white">{dob}</Text>
+          <Text className="text-[16px] font-LRegular text-white">{formatDOB(user?.dob)}</Text>
           <Ionicons name="chevron-down-outline" size={24} color="white" style={{ position: 'absolute', right: 10, top: 5, opacity: 0.8 }} />
         </Pressable>
 
@@ -178,23 +186,23 @@ const AccountScreen = () => {
         )}
       </View>
 
-      <View className="mb-2 justify-center">
+      <View className="mb-8 justify-center">
         <Text className="text-white text-[12px] font-LRegular ">Email</Text>
         <TextInput
           className="text-white border-b border-[#949494] justify-center text-[16px] font-LRegular"
-          value={email}
+          value={user?.email}
           onChangeText={setEmail}
         />
       </View>
 
-      <View className="mb-8 justify-center">
+      {/* <View className="mb-8 justify-center">
         <Text className="text-white text-[12px] font-LRegular ">Country</Text>
         <TextInput
           className="text-white border-b border-[#949494] justify-center text-[16px] font-LRegular"
           value={country}
           onChangeText={setCountry}
         />
-      </View>
+      </View> */}
 
       {/* Info Section */}
       <Text className="text-white text-[20px] mb-8 mt-4 font-LBold">Info</Text>
