@@ -1,4 +1,12 @@
-import { View, Text, ImageBackground, Animated, Image, TouchableOpacity, FlatList } from 'react-native';
+import {
+  View,
+  Text,
+  ImageBackground,
+  Animated,
+  Image,
+  TouchableOpacity,
+  FlatList,
+} from 'react-native';
 import React, { useRef } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -8,18 +16,19 @@ import { BlurView } from 'expo-blur';
 import { useAudioPlayer } from '../../context/AudioPlayerContext';
 
 const PlaylistPage = () => {
-  const { title, item: itemString } = useLocalSearchParams();
-  let item = JSON.parse(itemString);
+  const { title, item: itemString, image } = useLocalSearchParams();
+  let item = [];
 
-  // Ensure item is always an array (in case only one track was passed)
-  if (!Array.isArray(item)) {
-    item = [item];
+  try {
+    const parsed = JSON.parse(itemString);
+    item = Array.isArray(parsed) ? parsed : [parsed];
+  } catch (e) {
+    console.warn('Invalid playlist data passed.');
   }
 
   const scrollY = useRef(new Animated.Value(0)).current;
   const { loadAndPlayTrack } = useAudioPlayer();
 
-  // Interpolations for animation
   const headerHeight = scrollY.interpolate({
     inputRange: [0, 150],
     outputRange: [340, 180],
@@ -48,24 +57,23 @@ const PlaylistPage = () => {
   return (
     <>
       <StatusBar style="light" />
-      {/* Animated Header */}
       <Animated.View style={{ height: headerHeight, overflow: 'hidden' }}>
         <ImageBackground
-          source={item[0]?.image}
+          source={{ uri: image || item[0]?.image }}
           style={{ flex: 1 }}
           resizeMode="cover"
           blurRadius={30}
         >
           <SafeAreaView className="flex-1 justify-center items-center">
             <Animated.Image
-              source={{ uri:item[0]?.image}}
+              source={{ uri: image || item[0]?.image }}
               style={{
                 width: albumSize,
                 height: albumSize,
                 borderRadius: 12,
                 marginBottom: 12,
               }}
-              resizeMode="contain"
+              resizeMode="cover"
             />
             <Animated.Text
               className="font-LBold text-white text-center"
@@ -75,7 +83,6 @@ const PlaylistPage = () => {
             </Animated.Text>
           </SafeAreaView>
 
-          {/* Follow & Play Buttons */}
           <View className="flex-row items-center justify-around pb-4">
             <TouchableOpacity className="flex-row items-center">
               <Ionicons name="heart-outline" size={18} color="white" />
@@ -84,8 +91,10 @@ const PlaylistPage = () => {
             <TouchableOpacity
               className="flex-row items-center"
               onPress={() => {
-                loadAndPlayTrack(item[0], 0, item);
-                router.push('/player');
+                if (item.length > 0) {
+                  loadAndPlayTrack(item[0], 0, item);
+                  router.push('/player');
+                }
               }}
             >
               <Ionicons name="play" size={18} color="white" />
@@ -96,73 +105,78 @@ const PlaylistPage = () => {
       </Animated.View>
 
       <View className="flex-1 bg-[#1B1A1C]">
-      {/* Song List */}
-      <Animated.FlatList
-        data={item}
-        keyExtractor={(track, index) => `${track.title}-${index}`}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: false }
-        )}
-        contentContainerStyle={{
-          paddingHorizontal: 16,
-          paddingTop: 10,
-          paddingBottom: 5,
-          backgroundColor: '#1B1A1C',
-        }}
-        ListHeaderComponent={
-          <Text className="text-[#99999F] text-[14px] font-LRegular text-center px-7 pt-4 leading-5 mb-4">
-            Featuring{' '}
-            <Text className="text-white font-LBold">
-              Led Zeppelin, Pink Floyd, The Doors, The Rolling Stones
-            </Text>{' '}
-            and more.
-          </Text>
-        }
-        renderItem={({ item: track, index }) => (
-          <TouchableOpacity
-            className="flex-row items-center gap-3 pt-6"
-            onPress={() => {
-              loadAndPlayTrack(track, index, item);
-              router.push('/player');
-            }}
-          >
-            <Image
-              source={{uri: track.image}}
-              className="w-[45px] h-[45px] rounded-md"
-              resizeMode="cover"
-            />
-            <View className="pl-1">
-              <Text className="text-[14px] text-white font-LRegular mb-1" numberOfLines={1}>
-                {track.title}
-              </Text>
-              <Text className="text-[13px] text-[#99999F] font-LRegular" numberOfLines={1}>
-                {track.artist} / {formatDuration(track.duration)}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        )}
-        ListFooterComponent={
-          <BlurView
-            intensity={30}
-            tint="dark"
-            style={{
-              height: 80,
-              width: '100%',
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderTopLeftRadius: 12,
-              borderTopRightRadius: 12,
-              overflow: 'hidden',
-            }}
-          >
-            <Text className="text-white text-[14px] font-LRegular">
-              More songs load as you listen
+        <Animated.FlatList
+          data={item}
+          keyExtractor={(track, index) => `${track.title}-${index}`}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            { useNativeDriver: false }
+          )}
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            paddingTop: 10,
+            paddingBottom: 5,
+            backgroundColor: '#1B1A1C',
+          }}
+          ListHeaderComponent={
+            <Text className="text-[#99999F] text-[14px] font-LRegular text-center px-7 pt-4 leading-5 mb-4">
+              Featuring{' '}
+              <Text className="text-white font-LBold">
+                Led Zeppelin, Pink Floyd, The Doors
+              </Text>{' '}
+              and more.
             </Text>
-          </BlurView>
-        }
-        showsVerticalScrollIndicator={false}
-      />
+          }
+          renderItem={({ item: track, index }) => (
+            <TouchableOpacity
+              className="flex-row items-center gap-3 pt-6"
+              onPress={() => {
+                loadAndPlayTrack(track, index, item);
+                router.push('/player');
+              }}
+            >
+              <Image
+                source={{ uri: track.image }}
+                className="w-[45px] h-[45px] rounded-md"
+                resizeMode="cover"
+              />
+              <View className="pl-1">
+                <Text
+                  className="text-[14px] text-white font-LRegular mb-1"
+                  numberOfLines={1}
+                >
+                  {track.title}
+                </Text>
+                <Text
+                  className="text-[13px] text-[#99999F] font-LRegular"
+                  numberOfLines={1}
+                >
+                  {track.artist} / {formatDuration(track.duration)}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
+          ListFooterComponent={
+            <BlurView
+              intensity={30}
+              tint="dark"
+              style={{
+                height: 80,
+                width: '100%',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderTopLeftRadius: 12,
+                borderTopRightRadius: 12,
+                overflow: 'hidden',
+              }}
+            >
+              <Text className="text-white text-[14px] font-LRegular">
+                More songs load as you listen
+              </Text>
+            </BlurView>
+          }
+          showsVerticalScrollIndicator={false}
+        />
       </View>
     </>
   );

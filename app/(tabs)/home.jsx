@@ -50,42 +50,49 @@ const Home = () => {
     getRecentPlayed();
   }, []);
 
- useEffect(() => {
+  useEffect(() => {
   const fetchPlaylist = async () => {
     try {
-      // 1. Fetch custom user playlists from your backend
+      // 1️⃣ Fetch custom playlists (with songs)
       const customRes = await axios.get('https://tunenest-backend.onrender.com/api/v1/playlists');
 
       const customPlaylists = customRes.data.map(item => ({
         title: item.name,
-        artist: item.description || 'Your Playlist',
         subtitle: item.description || 'Custom Playlist',
-        duration: 0, // You can omit if not needed
         image: item.cover,
-        audio: null, // Optional: you can use a fallback
+        tracks: item.songs?.map(song => ({
+          title: song.title,
+          subtitle: song.artist || item.name,
+          artist: song.artist || 'Unknown',
+          duration: song.duration,
+          image: song.image || item.cover,
+          audio: song.audio || music,
+        })) || [],
       }));
 
-      // 2. Fetch Jamendo playlists
-      const jamendoRes = await axios.get(
-        'https://api.jamendo.com/v3.0/tracks/?client_id=3e2494c0&format=json&limit=10'
-      );
+      // 2️⃣ Fetch Jamendo artist-tracks
+      const jamendoRes = await axios.get('https://api.jamendo.com/v3.0/artists/tracks/?client_id=3e2494c0&format=json&limit=10');
 
-      const jamendoTracks = jamendoRes.data.results.map(track => ({
-        title: track.name,
-        artist: track.artist_name,
-        subtitle: track.artist_name,
-        duration: track.duration * 1000,
-        image: track.album_image,
-        audio: track.audio || music,
+      const jamendoPlaylists = jamendoRes.data.results.map(artist => ({
+        title: artist.name,
+        subtitle: 'Jamendo Artist Playlist',
+        image: artist.image,
+        tracks: artist.tracks.map(track => ({
+          title: track.name,
+          subtitle: artist.name,
+          artist: artist.name,
+          duration: Number(track.duration) * 1000,
+          image: track.album_image || artist.image,
+          audio: track.audio || music,
+        })),
       }));
 
-      // 3. Combine: custom first, then jamendo
-      const combinedPlaylists = [...customPlaylists, ...jamendoTracks];
+      // 3️⃣ Combine both
+      setPlaylist([...customPlaylists, ...jamendoPlaylists]);
+      console.log("Custom Playlist Sample Song:", customPlaylists[0]?.tracks?.[0]);
 
-      // 4. Set in state
-      setPlaylist(combinedPlaylists);
     } catch (error) {
-      console.error('Error fetching playlist:', error.response?.data || error.message);
+      console.error('Playlist fetch error:', error.message);
     }
   };
 
@@ -93,41 +100,52 @@ const Home = () => {
 }, []);
 
   useEffect(() => {
-        const fetchArtist = async () => {
-            try {
-                const response = await axios.get(
-                    'https://api.jamendo.com/v3.0/artists/tracks/?client_id=3e2494c0&format=json&limit=10'
-                );
+  const fetchArtists = async () => {
+    try {
+      // 🔹 Custom backend API
+      const customRes = await axios.get('https://tunenest-backend.onrender.com/api/v1/artist');
+      const customArtists = customRes.data.map((artist) => ({
+        artist: artist.name,
+        image: artist.profileImage,
+        coverImage: artist.coverImage,
+        genres: artist.genres,
+        languages: artist.languages,
+        country: artist.country,
+        bio: artist.bio,
+        tracks: [], 
+      }));
 
-                const artists = response.data.results;
+      // 🔹 Jamendo API
+      const jamendoRes = await axios.get(
+        'https://api.jamendo.com/v3.0/artists/tracks/?client_id=3e2494c0&format=json&limit=10'
+      );
 
-                const grouped = artists.map((artist) => {
-                    const artistName = artist.name;
-                    const artistImage = artist.image;
-                    const tracks = artist.tracks.map((track) => ({
-                        title: track.name,
-                        subtitle: artist.name,
-                        artist: artist.name,
-                        duration: Number(track.duration) * 1000,
-                        image: track.album_image || artist.image ,
-                        audio: track.audio,
-                    }));
+      const jamendoArtists = jamendoRes.data.results.map((artist) => ({
+        artist: artist.name,
+        image: artist.image,
+        coverImage: artist.image,
+        tracks: artist.tracks.map((track) => ({
+          title: track.name,
+          subtitle: artist.name,
+          artist: artist.name,
+          duration: Number(track.duration) * 1000,
+          image: track.album_image || artist.image,
+          audio: track.audio,
+        })),
+      }));
 
-                    return {
-                        artist: artistName,
-                        image: artistImage,
-                        tracks, // array of this artist's tracks
-                    };
-                });
+      // 🔹 Combine both
+      const allArtists = [...customArtists, ...jamendoArtists];
 
-                setArtist(grouped); // set as array of artist objects
-            } catch (error) {
-                console.error('Error fetching artists:', error.response?.data || error.message);
-            }
-        };
+      setArtist(allArtists);
+    } catch (error) {
+      console.error('Error fetching artists:', error.response?.data || error.message);
+    }
+  };
 
-        fetchArtist();
-    }, []);
+  fetchArtists();
+}, []);
+
 
   const headerHeight = scrollY.interpolate({
     inputRange: [0, 100],
