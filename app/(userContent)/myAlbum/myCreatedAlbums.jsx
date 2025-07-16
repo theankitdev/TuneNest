@@ -1,64 +1,63 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, Image, ScrollView, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import { router } from 'expo-router';
 import { useAuth } from '../../../context/authContext';
 import { useFocusEffect } from '@react-navigation/native';
-import { useCallback } from 'react';
 
-const API_URL = 'https://tunenest-backend.onrender.com/api/v1/user-playlists';
+const API_URL = 'https://tunenest-backend.onrender.com/api/v1/user-albums'; // 🔁 Update endpoint if needed
 
-export default function MyPlaylistsScreen() {
-  const [playlists, setPlaylists] = useState([]);
+export default function MyAlbumsScreen() {
+  const [albums, setAlbums] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
   useEffect(() => {
     if (user?._id) {
-      fetchUserPlaylists(user._id);
+      fetchUserAlbums(user._id);
     }
   }, [user]);
 
   useFocusEffect(
-  useCallback(() => {
-    if (user?._id) {
-      fetchUserPlaylists(user._id);
-    }
-  }, [user])
-);
+    useCallback(() => {
+      if (user?._id) {
+        fetchUserAlbums(user._id);
+      }
+    }, [user])
+  );
 
-  const fetchUserPlaylists = async (userId) => {
+  const fetchUserAlbums = async (userId) => {
     try {
       const res = await axios.get(`${API_URL}?userId=${userId}`);
-      setPlaylists(res.data);
+      setAlbums(res.data);
     } catch (err) {
-      console.error('Failed to fetch playlists:', err.message);
+      console.error('Failed to fetch albums:', err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const recentlyUpdated = playlists.slice(0, 5);
+  const recentlyUpdated = albums.slice(0, 5);
 
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center bg-[#161A1A]">
-        <Text className="text-white font-LRegular">Loading playlists...</Text>
+        <Text className="text-white font-LRegular">Loading albums...</Text>
       </View>
     );
   }
 
-  if (playlists.length === 0) {
+  if (albums.length === 0) {
     return (
       <View className="flex-1 items-center justify-center bg-[#161A1A] px-4">
         <Text className="text-gray-400 text-[16px] font-LRegular mb-4 text-center">
-          You have not created any playlist yet.
+          You haven’t created any albums yet.
         </Text>
         <TouchableOpacity
-          onPress={() => router.push('/myPlaylist/createPlaylist')}
+          onPress={() => router.push('/myAlbums/createAlbum')}
           className="bg-green-500 px-6 py-4 rounded-full"
         >
-          <Text className="text-black font-LBold text-[16px]">Create Playlist</Text>
+          <Text className="text-black font-LBold text-[16px]">Create Album</Text>
         </TouchableOpacity>
       </View>
     );
@@ -66,8 +65,8 @@ export default function MyPlaylistsScreen() {
 
   return (
     <ScrollView className="flex-1 bg-[#161A1A] px-4 py-6" contentContainerStyle={{ paddingBottom: 30 }}>
-      {/* Recently Updated */}
-      <Text className="text-white font-LRegular text-[18px] mb-6">Recently updated</Text>
+      {/* Recently Updated Albums */}
+      <Text className="text-white font-LRegular text-[18px] mb-6">Recently Updated</Text>
       <FlatList
         horizontal
         data={[{ isCreateCard: true }, ...recentlyUpdated]}
@@ -79,14 +78,14 @@ export default function MyPlaylistsScreen() {
           if (item.isCreateCard) {
             return (
               <TouchableOpacity
-                onPress={() => router.push('/myPlaylist/createPlaylist')}
+                onPress={() => router.push('/albums/createAlbum')}
                 className="mr-4 items-center justify-center"
               >
                 <View className="w-32 h-32 rounded-lg bg-neutral-800 items-center justify-center">
                   <Text className="text-white text-6xl">+</Text>
                 </View>
                 <Text className="text-white text-[14px] font-LRegular text-center mt-2 w-32">
-                  Create Playlist
+                  Create Album
                 </Text>
               </TouchableOpacity>
             );
@@ -94,7 +93,7 @@ export default function MyPlaylistsScreen() {
 
           return (
             <TouchableOpacity
-              onPress={() => router.push(`/myPlaylist/${item._id}`)}  // ✅ Navigate to detail
+              onPress={() => router.push(`/albums/${item._id}`)}  // Navigate to album detail
               className="mr-4 items-center"
             >
               <Image
@@ -109,12 +108,12 @@ export default function MyPlaylistsScreen() {
         }}
       />
 
-      {/* My Playlists Section */}
-      <Text className="text-white font-LRegular text-[18px] mb-10">My playlists</Text>
-      {playlists.map((item) => (
+      {/* All Albums */}
+      <Text className="text-white font-LRegular text-[18px] mb-10">My Albums</Text>
+      {albums.map((item) => (
         <TouchableOpacity
           key={item._id}
-          onPress={() => router.push(`/myPlaylist/${item._id}`)}  // ✅ Open detail page
+          onPress={() => router.push(`/albums/${item._id}`)}
           className="flex-row items-center mb-4"
         >
           <Image

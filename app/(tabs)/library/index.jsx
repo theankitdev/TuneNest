@@ -34,7 +34,7 @@ const Library = () => {
 
         <TouchableOpacity
           className="flex-row items-center space-x-3 mb-6"
-          onPress={() => router.push('/myAlbums')}
+          onPress={() => router.push('/myAlbums/')}
         >
           <Image source={albumIcon} style={{ width: 22, height: 22, marginRight:11 }} />
           <Text className="text-white text-[18px] font-LRegular">Albums</Text>
@@ -48,7 +48,7 @@ const Library = () => {
           <Text className="text-white text-[18px] font-LRegular">Artists</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           className="flex-row items-center space-x-3 mb-6"
           onPress={() => router.push('/myPodcasts')}
         >
@@ -56,7 +56,7 @@ const Library = () => {
           <Text className="text-white text-[18px] font-LRegular">{' '}
             Podcasts <Text className="text-[#2DCEEF] font-LRegular">+1</Text>
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <TouchableOpacity
           className="flex-row items-center space-x-3 mb-6"
