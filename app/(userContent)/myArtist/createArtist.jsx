@@ -43,13 +43,13 @@ export default function CreateArtistScreen() {
     try {
       setLoading(true);
       const res = await axios.post(API_URL, {
-        name: nameToSave,
+        title: nameToSave,
         userId: user._id,
       });
 
       const newArtist = res.data;
 
-      // Navigate to edit artist screen
+      // Navigate to edit screen and pass artistId
       router.replace({
         pathname: '/myArtist/[artistId]/edit',
         params: { artistId: newArtist._id },

@@ -42,7 +42,7 @@ const Library = () => {
 
         <TouchableOpacity
           className="flex-row items-center space-x-3 mb-6"
-          onPress={() => router.push('/myArtists')}
+          onPress={() => router.push('/myArtist/myCreatedArtists')}
         >
           <Ionicons name="star-outline" size={24} color="#2DCEEF" style={{marginRight:11}} />
           <Text className="text-white text-[18px] font-LRegular">Artists</Text>

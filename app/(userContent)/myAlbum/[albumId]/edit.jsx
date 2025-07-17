@@ -140,7 +140,7 @@ export default function AlbumEditScreen() {
             albumId: a.id,
             title: a.title,
             artist: a.artist,
-            image: a.image,
+            image: a.cover,
             songs: a.songs,
           }));
 
