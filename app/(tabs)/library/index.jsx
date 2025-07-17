@@ -34,7 +34,7 @@ const Library = () => {
 
         <TouchableOpacity
           className="flex-row items-center space-x-3 mb-6"
-          onPress={() => router.push('/myAlbums/')}
+          onPress={() => router.push('/myAlbum/myCreatedAlbums')}
         >
           <Image source={albumIcon} style={{ width: 22, height: 22, marginRight:11 }} />
           <Text className="text-white text-[18px] font-LRegular">Albums</Text>

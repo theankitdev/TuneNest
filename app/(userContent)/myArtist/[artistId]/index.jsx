@@ -12,20 +12,19 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useAudioPlayer } from '../../../../context/AudioPlayerContext';
 import { useFocusEffect } from '@react-navigation/native';
 
-
 export default function AlbumDetailScreen() {
   const router = useRouter();
-  const { albumId } = useLocalSearchParams(); // get albumId from URL
+  const { albumId } = useLocalSearchParams();
   const { playShuffledPlaylist } = useAudioPlayer();
 
   const [albumData, setAlbumData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useFocusEffect(
-  React.useCallback(() => {
-    fetchAlbumDetail();
-  }, [])
-);
+    React.useCallback(() => {
+      fetchAlbumDetail();
+    }, [])
+  );
 
   const fetchAlbumDetail = async () => {
     try {
@@ -60,12 +59,15 @@ export default function AlbumDetailScreen() {
           <Ionicons name="musical-notes-outline" size={120} color="white" />
         )}
         <Text className="text-white text-2xl font-LBold mt-2">{albumData.title}</Text>
-        <Text className="text-gray-400 font-LRegular mt-1">
-          {selectedAlbums.length} Album{selectedAlbums.length === 1 ? '' : 's'}
+        {albumData.description ? (
+          <Text className="text-gray-400 font-LRegular text-center mt-1">{albumData.description}</Text>
+        ) : null}
+        <Text className="text-gray-500 font-LRegular mt-1 italic">
+          {selectedAlbums.length} album{selectedAlbums.length !== 1 ? 's' : ''} selected
         </Text>
       </View>
 
-      {/* Buttons */}
+      {/* Action Buttons */}
       <View className="flex-row justify-around mb-12">
         <TouchableOpacity
           onPress={() => router.push(`/myAlbum/${albumData._id}/edit`)}
@@ -86,8 +88,8 @@ export default function AlbumDetailScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Sub-Albums List */}
-      <Text className="text-white font-LBold text-[18px] mb-4">Selected Albums</Text>
+      {/* Sub-Albums */}
+      <Text className="text-white font-LBold text-[18px] mb-4">Albums by Artist</Text>
       {selectedAlbums.length === 0 ? (
         <Text className="text-gray-400 font-LRegular mb-10">No albums selected.</Text>
       ) : (
@@ -102,13 +104,13 @@ export default function AlbumDetailScreen() {
             className="flex-row items-center mb-5"
           >
             <Image
-              source={{ uri: album.cover || 'https://via.placeholder.com/50' }}
+              source={{ uri: album.image || album.cover || 'https://via.placeholder.com/50' }}
               className="w-14 h-14 rounded mr-4"
             />
             <View>
               <Text className="text-white font-LRegular mb-1 text-[15px]">{album.title}</Text>
               <Text className="text-gray-400 font-LRegular text-[13px]">
-                {album.songs?.length || 0} songs
+                {album.artist} • {album.songs?.length || 0} songs
               </Text>
             </View>
           </TouchableOpacity>

@@ -10,53 +10,53 @@ import axios from 'axios';
 import { useAuth } from '../../../context/authContext';
 import { router } from 'expo-router';
 
-const API_URL = 'https://tunenest-backend.onrender.com/api/v1/user-albums';
+const API_URL = 'https://tunenest-backend.onrender.com/api/v1/user-artists';
 
-export default function CreateAlbumScreen() {
-  const [albumName, setAlbumName] = useState('');
-  const [defaultName, setDefaultName] = useState('My album #1');
+export default function CreateArtistScreen() {
+  const [artistName, setArtistName] = useState('');
+  const [defaultName, setDefaultName] = useState('My artist #1');
   const [loading, setLoading] = useState(false);
   const [initializing, setInitializing] = useState(true);
   const { user } = useAuth();
 
   useEffect(() => {
-    if (user?._id) fetchUserAlbums(user._id);
+    if (user?._id) fetchUserArtists(user._id);
   }, []);
 
-  const fetchUserAlbums = async (userId) => {
+  const fetchUserArtists = async (userId) => {
     try {
       const res = await axios.get(`${API_URL}?userId=${userId}`);
       const count = res.data.length + 1;
-      const generatedName = `My album #${count}`;
-      setAlbumName(generatedName);
+      const generatedName = `My artist #${count}`;
+      setArtistName(generatedName);
       setDefaultName(generatedName);
     } catch (err) {
-      console.error('Failed to load albums:', err.message);
+      console.error('Failed to load artists:', err.message);
     } finally {
       setInitializing(false);
     }
   };
 
   const handleCreate = async () => {
-    const nameToSave = albumName.trim() || defaultName;
+    const nameToSave = artistName.trim() || defaultName;
 
     try {
       setLoading(true);
       const res = await axios.post(API_URL, {
-        title: nameToSave,
+        name: nameToSave,
         userId: user._id,
       });
 
-      const newAlbum = res.data;
+      const newArtist = res.data;
 
-      // Navigate to edit screen and pass albumId
+      // Navigate to edit artist screen
       router.replace({
-        pathname: '/myAlbum/[albumId]/edit',
-        params: { albumId: newAlbum._id },
+        pathname: '/myArtist/[artistId]/edit',
+        params: { artistId: newArtist._id },
       });
 
     } catch (err) {
-      console.error('Failed to create album:', err.message);
+      console.error('Failed to create artist:', err.message);
     } finally {
       setLoading(false);
     }
@@ -73,13 +73,13 @@ export default function CreateAlbumScreen() {
   return (
     <View className="flex-1 bg-black justify-center items-center px-8">
       <Text className="text-white text-3xl mb-12 font-LBold">
-        Give your album a name
+        Give your artist a name
       </Text>
 
       <TextInput
         className="w-full border-b border-gray-600 text-white text-4xl font-LBold text-center mb-12 px-2 py-1"
-        value={albumName}
-        onChangeText={setAlbumName}
+        value={artistName}
+        onChangeText={setArtistName}
         selectTextOnFocus
         autoFocus
       />
