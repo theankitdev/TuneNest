@@ -7,7 +7,7 @@ const _layout = () => {
     return (
         <Stack screenOptions={{ animation: 'none', gestureEnabled: false }}>
             <Stack.Screen name="myCreatedPlaylist" options={{
-                title: 'My Albums',
+                title: 'My Playlists',
                 headerTitleAlign: 'center',
                 headerTitleStyle: {
                     color: 'white',
