@@ -40,7 +40,7 @@ const PremiumPlansScreen = () => {
       // Create Razorpay customer
       const { data: customerData } = await axios.post(`${API_BASE_URL}/create-customer`,
         {
-          name: `${user.firstName} ${user.lastName}`,
+          name: `${user.firstName}${user.lastName}`,
           email: user.email,
           contact: user.contact || '9999999999',
         },
@@ -80,11 +80,12 @@ const PremiumPlansScreen = () => {
 
       RazorpayCheckout.open(options)
         .then((data) => {
-          Alert.alert('Success', `Subscription successful!`);
+          Alert.alert('Success', `Subscription successful`);
           console.log('Payment success:', data);
         })
         .catch((err) => {
-          Alert.alert('Error', `Payment failed: ${err.description}`);
+          Alert.alert('Error', `Payment failed`);
+          console.error('Payment error:', err);
         });
     } catch (err) {
 

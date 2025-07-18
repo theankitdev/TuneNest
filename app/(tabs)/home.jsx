@@ -22,7 +22,7 @@ import axios from 'axios';
 import music from '../../assets/music/sample.mp3';
 
 const Home = () => {
-
+  const img_base_url ='https://tunenest-backend.onrender.com'
   const scrollY = useRef(new Animated.Value(0)).current;
 
   const [playlist, setPlaylist] = useState(null);
