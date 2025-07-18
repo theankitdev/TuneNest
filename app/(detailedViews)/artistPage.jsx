@@ -138,7 +138,7 @@ const ArtistPage = () => {
     order_id: '',
     prefill: {
       email: user.email ,
-      contact: '9191919191',
+      contact: '7982196893',
       name: `${user.firstName} ${user.lastName}`,
     },
     theme: {color: '#53a20e'}
