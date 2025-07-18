@@ -54,7 +54,7 @@ const GenreSelected = () => {
                 const tracks = response.data.results.map(track => ({
                     title: track.name,
                     artist: track.artist_name, // used in queue
-                    duration: track.duration * 1000, // Jamendo gives in seconds; convert to ms
+                    duration: track.duration , // Jamendo gives in seconds; convert to ms
                     image: track.album_image ,
                     audio: track.audio || music,
                 }));
@@ -77,7 +77,7 @@ const GenreSelected = () => {
                 const tracks = response.data.results.map(track => ({
                     title: track.name,
                     subtitle: track.artist_name, // used in section display
-                    duration: track.duration * 1000, // Jamendo gives in seconds; convert to ms
+                    duration: track.duration, // Jamendo gives in seconds; convert to ms
                     image: track.album_image ,
                     audio: track.audio || music,
                     releaseDate: track.releasedate, // assuming this field exists
@@ -109,7 +109,7 @@ const GenreSelected = () => {
                         title: track.name,
                         subtitle: artist.name,
                         artist: artist.name,
-                        duration: Number(track.duration) * 1000,
+                        duration: track.duration,
                         image: track.album_image || artist.image ,
                         audio: track.audio,
                     }));
@@ -162,7 +162,7 @@ const GenreSelected = () => {
 
             {/* Main Content */}
             <Animated.ScrollView
-                contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 15 }}
+                contentContainerStyle={{ paddingBottom: 100, paddingLeft: 15 }}
                 onScroll={Animated.event(
                     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                     { useNativeDriver: false }

@@ -17,6 +17,9 @@ import SectionList from '../../components/sectionList';
 import CircularSection from '../../components/circularSectionList';
 import axios from 'axios';
 import { useAudioPlayer } from '../../context/AudioPlayerContext';
+import { RAZORPAY_KEY_ID } from '@env'; 
+import { useAuth } from '../../context/authContext';
+import RazorpayCheckout from 'react-native-razorpay';
 
 const ArtistPage = () => {
   const { title, image, item: stringItem } = useLocalSearchParams();
@@ -26,6 +29,8 @@ const ArtistPage = () => {
   const [playlist, setPlaylist] = useState([]);
   const [artist, setArtist] = useState([]);
   const [shufflePlayed, setShufflePlayed] = useState(false);
+  const { user } = useAuth();
+
 
   const { playShuffledPlaylist, sound } = useAudioPlayer();
 
@@ -121,6 +126,32 @@ const ArtistPage = () => {
     }
   };
 
+  const amount = 100;
+  const handlePayment = async () => {
+     var options = {
+    description: 'Give a tip to your favorite artist',
+    image: '',
+    currency: 'INR',
+    key: RAZORPAY_KEY_ID,
+    amount: amount * 100, 
+    name: 'TuneNest',
+    order_id: '',
+    prefill: {
+      email: user.email ,
+      contact: '9191919191',
+      name: `${user.firstName} ${user.lastName}`,
+    },
+    theme: {color: '#53a20e'}
+  }
+  RazorpayCheckout.open(options).then((data) => {
+    // handle success
+    alert(`Success: ${data.razorpay_payment_id}`);
+  }).catch((error) => {
+    // handle failure
+    alert(`Error: ${error.code} | ${error.description}`);
+    console.error('Payment error:', error);
+  });
+  }
   return (
     <>
       <StatusBar style="light" />
@@ -146,8 +177,8 @@ const ArtistPage = () => {
                 resizeMode="cover"
               />
               {/* Blue Tick Overlay */}
-              <View className="absolute bottom-1 right-1 bg-white rounded-full p-[2px]">
-                <View className="bg-blue-500 w-3 h-3 rounded-full" />
+              <View className="absolute top-[20px] right-3  bg-blue-500 rounded-full p-[2px]">
+                <Ionicons name="checkmark" size={16} color='white' />
               </View>
             </View>
 
@@ -173,6 +204,13 @@ const ArtistPage = () => {
               <Text className="text-white text-[12px] font-LBold px-1">FOLLOW</Text>
             </TouchableOpacity>
 
+             <TouchableOpacity className="flex-row items-center"
+              onPress={handlePayment}
+             >
+              <Ionicons name="gift-outline" size={18} color="white" />
+              <Text className="text-white text-[12px] font-LBold px-1">TIP</Text>
+            </TouchableOpacity>
+            
             <TouchableOpacity
               className={`flex-row items-center px-3 py-2 rounded-full ${
                 shufflePlayed ? 'bg-white' : 'bg-transparent'

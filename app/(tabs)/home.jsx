@@ -291,7 +291,7 @@ const Home = () => {
           <CircularSection
             title='You might like these artists'
             item={artist}
-            pathname='/playlistPage'
+            pathname='/artistPage'
           />
         )}
 
