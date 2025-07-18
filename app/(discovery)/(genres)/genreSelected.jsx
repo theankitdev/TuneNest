@@ -15,13 +15,14 @@ import Options from '../../../components/options';
 import SectionList from '../../../components/sectionList';
 import { sections } from '../../../components/Data';
 import Genre from './genre';
-import { useLocalSearchParams } from 'expo-router';
 import CircularSection from '../../../components/circularSectionList';
 import axios from 'axios';
 import music from '../../../assets/music/sample.mp3';
+import { useGenre } from '../../../context/GenreContext';
 
 const GenreSelected = () => {
-    const { title, image } = useLocalSearchParams();
+    const { selectedGenre } = useGenre();
+    const { title, image } = selectedGenre;
     const [playlist, setPlaylist] = React.useState(null);
     const [newReleases, setNewReleases] = React.useState([]);
     const [artist, setArtist] = React.useState([]);
@@ -42,8 +43,8 @@ const GenreSelected = () => {
     const tabOptions = [
         { label: 'OVERVIEW', path: '/genreSelected' },
         { label: 'PLAYLISTS', path: '/genrePlaylists', params: { image } },
-        { label: 'NEW RELEASES', path: '/podcasts' },
-        { label: 'ARTISTS', path: '/recommendation' },
+        { label: 'NEW RELEASES', path: '/genreNewReleases' },
+        { label: 'ARTISTS', path: '/genreArtist' },
     ];
 
     useEffect(() => {

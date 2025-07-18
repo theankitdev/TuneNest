@@ -135,7 +135,7 @@ const GenrePlaylists = () => {
                   fontFamily: 'Lato-Bold',
                 }}
               >
-                genreArtist
+                New Releases
               </Animated.Text>
             </View>
             <Options options={tabOptions} />

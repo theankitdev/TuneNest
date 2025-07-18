@@ -155,7 +155,7 @@ const Home = () => {
 
   const titleFontSize = scrollY.interpolate({
     inputRange: [0, 100],
-    outputRange: [40, 18],
+    outputRange: [30, 18],
     extrapolate: 'clamp',
   });
 
@@ -182,7 +182,7 @@ const Home = () => {
                   fontFamily: 'Lato-Bold',
                 }}
               >
-                Home
+                Recommendation
               </Animated.Text>
             </View>
 
@@ -192,118 +192,9 @@ const Home = () => {
       </Animated.View>
 
       {/* Main Content */}
-      <Animated.ScrollView
-        contentContainerStyle={{ paddingBottom: 130, paddingLeft: 15, flexGrow: 1 }}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: false }
-        )}
-        scrollEventThrottle={16}
-        showsVerticalScrollIndicator={false}
-        className="bg-[#1B1A1C]"
-      >
-
-        {/* {recentlyPlayed && (
-          <SectionList
-            title='Recently Played'
-            item={recentlyPlayed}
-            pathname='/playlistPage'
-          />
-        )} */}
-
-
-        {playlist && (
-          <SectionList
-            title='Make monday more productive'
-            item={playlist}
-            pathname='/playlistPage'
-          />
-        )}
-
-        {/* Browse */}
-        <View>
-          <Text className="text-white font-LBold text-[20px] pb-2">Browse</Text>
-          <Text className="text-[14px] font-LRegular text-[#99999F]">Explore by genre and mood</Text>
-        </View>
-        <FlatList
-          data={genre}
-          horizontal
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={{ marginRight: 15 }}
-              onPress={() => router.push({ pathname: '/podcasts', params: { title: item.title, image: item.image } })}
-            >
-              <Image
-                source={item.image}
-                style={{ width: '151', height: 90, borderRadius: 10 }}
-                resizeMode="cover"
-              />
-            </TouchableOpacity>
-          )}
-          contentContainerStyle={{ marginVertical: 25 }}
-          showsHorizontalScrollIndicator={false}
-        />
-
-        {playlist && (
-          <SectionList
-            title='Playlist picks'
-            subtitle='Selected for you based on your recent activity'
-            item={playlist}
-            pathname='/playlistPage'
-          />
-        )}
-
-        {/* Podcast */}
-        <View>
-          <Text className="text-white font-LBold text-[20px] pb-2">Podcasts</Text>
-          <Text className="text-[14px] font-LRegular text-[#99999F]">Explore by categories and popularity</Text>
-        </View>
-        <FlatList
-          data={genre}
-          horizontal
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={{ marginRight: 15 }}
-              onPress={() => router.push({ pathname: '/podcasts', params: { title: item.title, image: item.image } })}
-            >
-              <Image
-                source={item.image}
-                style={{ width: '151', height: 90, borderRadius: 10 }}
-                resizeMode="cover"
-              />
-            </TouchableOpacity>
-          )}
-          contentContainerStyle={{ marginVertical: 25 }}
-          showsHorizontalScrollIndicator={false}
-        />
-
-        {playlist && (
-          <SectionList
-            title='New releases for you'
-            item={playlist}
-            pathname='/playlistPage'
-          />
-        )}
-
-        {artist && (
-          <CircularSection
-            title='You might like these artists'
-            item={artist}
-            pathname='/artistPage'
-          />
-        )}
-
-        {playlist && (
-          <SectionList
-            title='Popular playlists'
-            item={playlist}
-            pathname='/playlistPage'
-          />
-        )}
-
-      </Animated.ScrollView>
+      <View className="flex-1 bg-[#1B1A1C] items-center justify-center">
+        <Text className='text-white text-[20px]'>In progress....</Text>
+      </View>
 
     </>
   );

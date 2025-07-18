@@ -13,9 +13,11 @@ import { useLocalSearchParams, router } from 'expo-router';
 import axios from 'axios';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Options from '../../../components/options';
+import { useGenre } from '../../../context/GenreContext';
 
 const GenrePlaylists = () => {
-  const { title, image } = useLocalSearchParams();
+  const { selectedGenre } = useGenre();
+  const { title, image } = selectedGenre;
   const [playlist, setPlaylist] = useState([]);
   const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -34,8 +36,8 @@ const GenrePlaylists = () => {
   const tabOptions = [
     { label: 'OVERVIEW', path: '/genreSelected', params: { image } },
     { label: 'PLAYLISTS', path: '/genrePlaylists' },
-    { label: 'NEW RELEASES', path: '/newReleases' },
-    { label: 'ARTISTS', path: '/recommendation' },
+    { label: 'NEW RELEASES', path: '/genreNewReleases' },
+    { label: 'ARTISTS', path: '/genreArtist' },
   ];
 
   useEffect(() => {
