@@ -128,30 +128,59 @@ const ArtistPage = () => {
 
   const amount = 100;
   const handlePayment = async () => {
-     var options = {
+  const amount = 100;
+
+  const options = {
     description: 'Give a tip to your favorite artist',
     image: '',
     currency: 'INR',
     key: RAZORPAY_KEY_ID,
-    amount: amount * 100, 
+    amount: amount * 100,
     name: 'TuneNest',
     order_id: '',
     prefill: {
-      email: user.email ,
+      email: user?.email || '',
       contact: '9191919191',
-      name: `${user.firstName} ${user.lastName}`,
+      name: `${user?.firstName || ''} ${user?.lastName || ''}`,
     },
-    theme: {color: '#53a20e'}
-  }
-  RazorpayCheckout.open(options).then((data) => {
-    // handle success
-    alert(`Success: ${data.razorpay_payment_id}`);
-  }).catch((error) => {
-    // handle failure
-    alert(`Error: ${error.code} | ${error.description}`);
-    console.error('Payment error:', error);
-  });
-  }
+    theme: { color: '#53a20e' },
+  };
+
+  RazorpayCheckout.open(options)
+    .then(async (data) => {
+      // ✅ Razorpay success
+      const paymentData = {
+        razorpay_payment_id: data.razorpay_payment_id,
+        amount,
+        user: {
+          id: user._id, // Optional
+          name: `${user?.firstName || ''} ${user?.lastName || ''}`,
+          email: user?.email,
+          image: user?.profilePic || '', // update if different key
+        },
+        artist: {
+          id: item.id || '', // Assuming item has `id`, else pass a static artist id
+          name: item?.artistName || title,
+          image: image,
+          genre: item?.genre || '',
+        },
+        date: new Date().toISOString(),
+      };
+
+      try {
+        await axios.post('https://tunenest-backend.onrender.com/api/v1/tips', paymentData);
+        alert('Tip successfully recorded!');
+      } catch (err) {
+        console.error('Backend Tip API Error:', err.response?.data || err.message);
+        alert('Payment success but failed to record tip.');
+      }
+    })
+    .catch((error) => {
+      alert(`Error: ${error.code} | ${error.description}`);
+      console.error('Payment error:', error);
+    });
+};
+
   return (
     <>
       <StatusBar style="light" />
