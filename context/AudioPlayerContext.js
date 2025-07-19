@@ -1,6 +1,14 @@
-import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useRef,
+  useState,
+  useEffect,
+} from 'react';
 import { Audio } from 'expo-av';
 import { AppState } from 'react-native';
+import { useSegments } from 'expo-router';
+import { useNavigationContainerRef, usePathname } from 'expo-router';
 
 const AudioPlayerContext = createContext();
 export const useAudioPlayer = () => useContext(AudioPlayerContext);
@@ -20,21 +28,26 @@ export const AudioPlayerProvider = ({ children }) => {
   const [isRepeat, setIsRepeat] = useState(false);
   const [isShuffled, setIsShuffled] = useState(false);
 
-  // Handle app background state
-  useEffect(() => {
-    const sub = AppState.addEventListener('change', async (state) => {
-      if (state === 'background' && sound.current) {
-        await sound.current.pauseAsync();
-        setIsPlaying(false);
-      }
-    });
-    return () => sub.remove();
-  }, []);
+  const segments = useSegments(); // From expo-router
 
+  // 🔇 Stop music when entering auth/index routes
+  const pathname = usePathname();
+
+useEffect(() => {
+  const authPaths = ['/', '/login', '/signup'];
+  if (authPaths.includes(pathname)) {
+    if (sound.current) {
+      sound.current.stopAsync();
+      setIsPlaying(false);
+      setIsMiniPlayerVisible(false);
+    }
+  }
+}, [pathname]);
+
+  // 🔁 Playback status
   const setupPlaybackStatus = () => {
     sound.current.setOnPlaybackStatusUpdate((status) => {
       if (!status.isLoaded) return;
-
       setPosition(status.positionMillis);
       setDuration(status.durationMillis || 1);
 
@@ -44,6 +57,7 @@ export const AudioPlayerProvider = ({ children }) => {
     });
   };
 
+  // ⛔ Unload sound
   const unloadCurrentSound = async () => {
     if (sound.current) {
       try {
@@ -56,6 +70,7 @@ export const AudioPlayerProvider = ({ children }) => {
     }
   };
 
+  // ▶️ Load and play
   const loadAndPlayTrack = async (track, index = 0, list = []) => {
     if (!track?.audio || isLoading.current) return;
     isLoading.current = true;
@@ -130,7 +145,7 @@ export const AudioPlayerProvider = ({ children }) => {
 
     const shuffled = [...list].sort(() => Math.random() - 0.5);
     await loadAndPlayTrack(shuffled[0], 0, shuffled);
-    setOriginalPlaylist(list); // Keep original
+    setOriginalPlaylist(list);
     setIsShuffled(true);
   };
 
@@ -141,7 +156,6 @@ export const AudioPlayerProvider = ({ children }) => {
     }
   };
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (sound.current) sound.current.unloadAsync();

@@ -33,7 +33,7 @@ const MiniPlayer = () => {
   const isInTabs = segments[0] === '(tabs)';
 
   // Hide MiniPlayer
-  if (!isMiniPlayerVisible || !currentTrack || pathname === '/player') return null;
+  if (!isMiniPlayerVisible || !currentTrack || pathname === '/player' || pathname === '/index') return null;
 
   return (
     <View style={[styles.wrapper, { bottom: isInTabs ? 80 : 20 }]}>

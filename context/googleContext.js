@@ -1,39 +1,37 @@
-import * as Google from "expo-auth-session/providers/google";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   signInWithCredential,
   GoogleAuthProvider,
+  onAuthStateChanged,
 } from "firebase/auth";
-import { FIREBASE_AUTH } from "../FirebaseConfig";
-import * as AuthSession from "expo-auth-session";
+import { auth } from "../FirebaseConfig";
+import * as Google from "expo-auth-session/providers/google";
+import * as WebBrowser from "expo-web-browser";
+import { useRouter } from "expo-router"; // ✅ ADD THIS
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// ✅ Use proxy redirect URI for 
-const redirectUri = AuthSession.makeRedirectUri({
-  native: "tunenest://redirect",
-});
-
-console.log("📢 Expo Redirect URI:", redirectUri);
+WebBrowser.maybeCompleteAuthSession();
 
 export const useGoogleAuth = () => {
+  const [userInfo, setUserInfo] = useState(null);
   const [request, response, promptAsync] = Google.useAuthRequest({
-    expoClientId: "622837714980-73gmb1anfqfoq4rcncu6of9jenetvneo.apps.googleusercontent.com",
-    androidClientId: "622837714980-prnl0so2s64k1qukt2eftakh1t3ogd9p.apps.googleusercontent.com",
-    webClientId: "622837714980-uhgsshr6edqmq52ahimber2id2elhpsr.apps.googleusercontent.com",
-    scopes: ["profile", "email"],
-    responseType: "id_token",
-    redirectUri, // ← auto-generated
+    androidClientId: "444219623159-o566c1fcjeuubmm7apcos5hcvmvfci81.apps.googleusercontent.com",
+    iosClientId: "444219623159-lfg7jptm582h3rn6q6hmpta6fv9jg956.apps.googleusercontent.com",
+    
   });
 
-  console.log("📢 Expo Redirect URI to add in Google Console:", redirectUri);
+  const router = useRouter(); // ✅
 
   useEffect(() => {
     if (response?.type === "success") {
-      const { id_token } = response.authentication;
+
+      const { id_token } = response.params;
 
       const credential = GoogleAuthProvider.credential(id_token);
-      signInWithCredential(FIREBASE_AUTH, credential)
+      signInWithCredential(auth, credential)
         .then((userCredential) => {
           console.log("✅ Google Sign-in Success:", userCredential.user.email);
+          router.replace("/home"); // ✅ Redirect after login
         })
         .catch((err) => {
           console.error("❌ Firebase Sign-in Error:", err.message);
@@ -41,5 +39,17 @@ export const useGoogleAuth = () => {
     }
   }, [response]);
 
-  return { promptAsync, request };
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setUserInfo(user);
+      } else {
+        setUserInfo(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  return { promptAsync, request, userInfo };
 };

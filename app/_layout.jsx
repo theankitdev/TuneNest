@@ -1,7 +1,6 @@
-import React, { use } from 'react';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useFonts } from 'expo-font';
-import { SplashScreen, Stack } from 'expo-router';
+import { SplashScreen, Stack, usePathname } from 'expo-router';
 import { AudioPlayerProvider } from '../context/AudioPlayerContext';
 import '../global.css';
 import MiniPlayer from '../components/minPlayer';
@@ -10,6 +9,7 @@ import { AuthProvider } from '../context/authContext';
 SplashScreen.preventAutoHideAsync();
 
 const RootLayout = () => {
+  const pathname = usePathname();
 
   const [fontsLoaded, error] = useFonts({
     'Lato-Black': require('../assets/fonts/Lato-Black.ttf'),
@@ -33,21 +33,24 @@ const RootLayout = () => {
 
   if (!fontsLoaded) return null;
 
+  const hideMiniPlayer = pathname === '/' || pathname === '/index' || pathname === '/login' || pathname === '/signup';
+
   return (
     <AuthProvider>
-    <AudioPlayerProvider>
-      <Stack screenOptions={{ animation: 'none', gestureEnabled: false }}>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(search)" options={{ headerShown: false }} />
-        <Stack.Screen name="(discovery)" options={{ headerShown: false }} />
-        <Stack.Screen name="(musicPlayback)" options={{ headerShown: false }} />
-        <Stack.Screen name="(userContent)" options={{ headerShown: false }} />
-        <Stack.Screen name="(detailedViews)" options={{ headerShown: false }} />
-      </Stack>
-      <MiniPlayer />
-    </AudioPlayerProvider>
+      <AudioPlayerProvider>
+        <Stack screenOptions={{ animation: 'none', gestureEnabled: false }}>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="(search)" options={{ headerShown: false }} />
+          <Stack.Screen name="(discovery)" options={{ headerShown: false }} />
+          <Stack.Screen name="(musicPlayback)" options={{ headerShown: false }} />
+          <Stack.Screen name="(userContent)" options={{ headerShown: false }} />
+          <Stack.Screen name="(detailedViews)" options={{ headerShown: false }} />
+        </Stack>
+
+        {!hideMiniPlayer && <MiniPlayer />}
+      </AudioPlayerProvider>
     </AuthProvider>
   );
 };

@@ -2,7 +2,7 @@
   "expo": {
     "name": "TuneNest",
     "slug": "tunenest",
-    "owner": "ankitsharma001",
+    "owner": "ankitsharma22",
     "scheme": "tunenest",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -51,12 +51,13 @@
             "useFrameworks": "static"
           }
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "6e5b5a15-1888-4140-8a18-af3bcd424c51"
+        "projectId": "decd555b-27f9-4b67-8162-42778d9b306c"
       }
     }
   }
