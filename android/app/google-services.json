@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "12215828874",
+    "project_id": "tunenest-1de17",
+    "storage_bucket": "tunenest-1de17.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:12215828874:android:b07240903a103798bac873",
+        "android_client_info": {
+          "package_name": "com.tunenest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "12215828874-dafqjh09ukg2mbsmj9eeq28q41pt0he8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tunenest",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "12215828874-4d42de55ps6hmr2qe1qunrgseagcfiin.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABzbMRuh3HMSqlceAQNlxz1W28iAHkH8M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "12215828874-4d42de55ps6hmr2qe1qunrgseagcfiin.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

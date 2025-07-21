@@ -1,13 +1,21 @@
-import { View, Text } from 'react-native'
 import React from 'react'
-import './global.css'
+import './global.css';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import SplashScreen from './src/screens/splash';
+import SignInScreen from './src/screens/signin';
+
+const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
-    <View className='flex-1 items-center justify-center '>
-      <Text>App</Text>
-    </View>
-  )
-}
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Splash" component={SplashScreen} />
+        <Stack.Screen name="SignIn" component={SignInScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
 
-export default App
+export default App;
