@@ -18,8 +18,7 @@ const Stack = createNativeStackNavigator<AuthStackParamList>();
 
 export default function AuthStack() {
   return (
-    <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Splash" component={SplashScreen} />
+    <Stack.Navigator initialRouteName="SignUp" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="SignUp" component={SignUp} />
       <Stack.Screen name="SignIn" component={SignIn} />
       <Stack.Screen name="OtpScreen" component={OtpScreen} />

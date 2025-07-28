@@ -4,6 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import Album from '../../assets/Album.png';
+import { Scroll } from 'lucide-react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const { width } = Dimensions.get('window');
 
@@ -25,7 +27,7 @@ const HomeScreen = ({ navigation }) => {
   useEffect(() => {
     const fetchPlaylist = async () => {
       try {
-        const customRes = await axios.get('https://tunenest-backend.onrender.com/api/v1/playlists');
+        const customRes = await axios.get('https://tunenest-backend-a35y.onrender.com/api/v1/playlists');
         const customPlaylists = customRes.data.map(item => ({
           id: item._id,
           title: item.name,
@@ -70,9 +72,10 @@ const HomeScreen = ({ navigation }) => {
   }, []);
 
   return (
-    <SafeAreaView className="flex-1 bg-[#353A40] px-4">
+   
+    <SafeAreaView className="flex-1 bg-[#353A40] ">
       {/* Top Header */}
-      <View className="flex-row justify-between items-center pt-4 mb-4">
+      <View className="flex-row justify-between items-center pt-4 mb-4 px-4">
         <Text className="text-white text-[18px] font-USemiBold">Good afternoon</Text>
         <View className="flex-row gap-8">
           <View className="h-[44px] w-[44px] bg-[#1C1F22] rounded-full items-center justify-center">
@@ -86,6 +89,8 @@ const HomeScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
+
+       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 90, }} className="pl-4">
 
       {/* Recently Played */}
       <View className="mb-6">
@@ -214,7 +219,9 @@ const HomeScreen = ({ navigation }) => {
           />
         </View>
       )}
+        </ScrollView>
     </SafeAreaView>
+  
   );
 };
 

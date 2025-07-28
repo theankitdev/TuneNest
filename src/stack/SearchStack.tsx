@@ -8,8 +8,8 @@ const Stack = createNativeStackNavigator();
 
 export default function SearchStack() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="SearchMain" component={HomeScreen} options={{ title: 'Search' }} />
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="SearchMain" component={HomeScreen} />
     </Stack.Navigator>
   );
 }

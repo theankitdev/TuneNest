@@ -5,19 +5,19 @@ import RootNavigation from './src/navigation/rootNavigation';
 import './global.css';
 import { AuthProvider } from './src/context/AuthContext.js';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { AudioPlayerProvider } from './src/context/AudioPlayerContext';
-import MiniPlayer from './src/components/MiniPlayer';
+// import { AudioPlayerProvider } from './src/context/AudioPlayerContext';
+// import MiniPlayer from './src/components/MiniPlayer';
 
 const App = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
-        <StatusBar backgroundColor="transparent" translucent={true} barStyle="dark-content" />
+        <StatusBar backgroundColor="transparent" translucent={true} barStyle="light-content" />
         <AuthProvider>
-          <AudioPlayerProvider>
+          {/* <AudioPlayerProvider> */}
           <RootNavigation />
-          <MiniPlayer />
-          </AudioPlayerProvider>
+          {/* <MiniPlayer /> */}
+          {/* </AudioPlayerProvider> */}
         </AuthProvider>
       </NavigationContainer>
     </GestureHandlerRootView>
